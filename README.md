@@ -11,8 +11,11 @@ Introduction
 This search bundle allows you to add search to your site.  It uses the Google Websearch
 XML API as a backend service.
 Provided for you are:
+
 * A service which passes submitted queries on to google, and returns HTML results
+
 * A service which provides paging for the search results
+
 * A controller service which can be used to render a search box from a template
 
 
