@@ -35,7 +35,7 @@ These parameters can be configured in your config.yml:
   * Change this to true if you want to restrict the search to results that
     Google thinks are in the language specified by the session locale
 
-liip_search.translation_domain
+* liip_search.translation_domain
   * default value: 'liip_search_bundle_search'
   * Provides the name of the translation file to use.
 
