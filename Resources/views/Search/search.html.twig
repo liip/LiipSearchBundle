@@ -1,0 +1,17 @@
+{% include 'LiipSearchBundle:Search:search_results_title.html.twig' with {'translationDomain':translationDomain} %}
+
+{% include "LiipSearchBundle:Search:search_box.html.twig" with {'field_id': 'query2', 'translationDomain':translationDomain, 'search_route':search_route } %}
+
+{% if estimated %}
+    {% include 'LiipSearchBundle:Search:search_results_summary.html.twig' with {'count':estimated, 'query':searchTerm, 'translationDomain': translationDomain} %}
+        <div id="search-results">
+            {% include 'LiipSearchBundle:Search:search_results.html.twig' with {'searchResults':searchResults, 'query':searchTerm} %}
+            {% if pagingHtml  %}
+                <div class="pager">
+                    {{ pagingHtml |raw }}
+                </div>
+            {% endif %}
+        </div>
+{% else %}
+    <p>{% trans from translationDomain %}search_noresults{% endtrans %}</p>
+{% endif %}

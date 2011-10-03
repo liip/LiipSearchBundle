@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="1">
+                <source>search_term</source>
+                <target>%count% résultat pour &quot;%query%&quot; trouvé.|%count% résultats pour &quot;%query%&quot; trouvés.</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>search_noresults</source>
+                <target>Saucun résultat trouvé</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>search_failure</source>
+                <target>La recherche n'est actuellement pas disponible</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>search</source>
+                <target>rechercher</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
+

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="1">
+                <source>search_term</source>
+                <target>%count% result for &quot;%query%&quot; has been found.|%count% results for &quot;%query%&quot; have been found.</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>search_noresults</source>
+                <target>Sorry, I found no results for your query on the Liip website.</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>search_failure</source>
+                <target>We are very sorry, but the search service is not available at the moment.</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>search</source>
+                <target>Search</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>previous</source>
+                <target>Prev</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>next</source>
+                <target>Next</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>Search this site</source>
+                <target>Search liip.ch</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>send</source>
+                <target>Send</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

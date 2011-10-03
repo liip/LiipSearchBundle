@@ -1,0 +1,25 @@
+{% if paging.prev|length %}
+    <a class="additional_nav_prev" href="{{ paging.prev[paging.current-1] }}">{% trans from translationDomain %}previous{% endtrans %}</a>
+{% endif %}
+{% if paging.first|length %}
+    {% for page, url in paging.first %}
+        <a class="page" href="{{ url }}">{{ page }}</a>
+    {% endfor %}
+    ...
+{% endif %}
+{% for page, url in paging.prev %}
+    <a class="page" href="{{ url }}">{{ page }}</a>
+{% endfor %}
+<a class="page current-page" href="#">{{ paging.current }}</a>
+{% for page, url in paging.next %}
+    <a class="page" href="{{ url }}">{{ page }}</a>
+{% endfor %}
+{% if paging.last|length %}
+    ...
+    {% for page, url in paging.last %}
+        <a class="page" href="{{ url }}">{{ page }}</a>
+    {% endfor %}
+{% endif %}
+{% if paging.next|length %}
+    <a class="additional_nav_next" href="{{ paging.next[paging.current+1] }}">{% trans from translationDomain %}next{% endtrans %}</a>
+{% endif %}
