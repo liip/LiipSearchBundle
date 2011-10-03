@@ -26,14 +26,13 @@ These parameters can be configured in your config.yml:
 
 * liip_search.restrict_to_site
   * default value: ''
-  * You may specify a domain here to restrict the search to a single domain
-    if you have configured several domains to search in your sitesearch account.
-    Example value: 'www.example.com'
+  * example value: 'www.example.com'
+  * With the default, empty value, all domains configured in the sitesearch account will be searched
+  * You may specify a domain here to restrict the search to a single domain if you have configured several domains to search in your sitesearch account
 
 * liip_search.restrict_by_language
   * default value: false
-  * Change this to true if you want to restrict the search to results that
-    Google thinks are in the language specified by the session locale
+  * Change this to true if you want to restrict the search to results that Google thinks are in the language specified by the session locale
 
 * liip_search.translation_domain
   * default value: 'liip_search_bundle_search'
@@ -46,23 +45,20 @@ These parameters can be configured in your config.yml:
 * liip_search.pager_max_extremity_items
   * default value: 2
   * How many page links to always show at the beginning and end of the search results
-  * For example, with a value of 2, this always shows page 1, 2, n-1, n, where n
-    is the last page of results.  It should do the right thing, e.g. it will
-    NOT show something like 1,2,1,2 when there are only 2 pages of results.
+  * For example, with a value of 2, this always shows page 1, 2, n-1, n, where n is the last page of results.  It should do the right thing, e.g. it will NOT show something like 1,2,1,2 when there are only 2 pages of results.
 
 * liip_search.pager_max_adjoining_items
   * default value: 2
   * How many page links to always show before and after the current page
-  * For example, with a value of 2, on page 6 of the results, it would show
-    <extemity pages> ... 4 5 *6* 7 8 ... <extemity pages>
+  * For example, with a value of 2, on page 6 of the results, it would show <extemity pages> ... 4 5 *6* 7 8 ... <extemity pages>
 
 * liip_search.query_param_name: q
   * default value: 'q'
-  * The key string used for submitting the search term (e.g. /search?q=software)
+  * The key string used for submitting the search term (e.g. /search?*q*=software)
 
 * liip_search.page_param_name
   * default value: 'p'
-  * The key string used for submitting the page number (e.g. /search?q=software&p=3)
+  * The key string used for submitting the page number (e.g. /search?q=software&*p*=3)
 
 Usage
 -----
