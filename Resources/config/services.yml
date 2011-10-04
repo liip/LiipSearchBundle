@@ -22,5 +22,12 @@ services:
             router: "@router"
             search_route: "%liip_search.search_route%"
             templating_engine: "@templating"
-            max_extremity_items: "%liip_search.pager_max_extemity_items%"
+            max_extremity_items: "%liip_search.pager_max_extremity_items%"
             max_adjoining_items: "%liip_search.pager_max_adjoining_items%"
+
+    liip_search_default_controller:
+        class: Liip\SearchBundle\Controller\DefaultController
+        scope: request
+        arguments:
+            container: "@service_container"
+            router: "@router"

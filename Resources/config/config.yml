@@ -3,7 +3,7 @@ parameters:
     # If search results should be restricted to one site, specify the site like this:
     # liip_search.restrict_to_site: www.liip.ch
     liip_search.restrict_to_site:
-    liip_search.pager_max_extemity_items: 2
+    liip_search.pager_max_extremity_items: 2
     liip_search.pager_max_adjoining_items: 2
     liip_search.results_per_page: 10
     liip_search.restrict_by_language: false

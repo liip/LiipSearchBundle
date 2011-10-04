@@ -1,6 +1,5 @@
 {% include 'LiipSearchBundle:Search:search_results_title.html.twig' with {'translationDomain':translationDomain} %}
-
-{% include "LiipSearchBundle:Search:search_box.html.twig" with {'field_id': 'query2', 'translationDomain':translationDomain, 'search_route':search_route } %}
+{% render 'liip_search_default_controller:showSearchBoxAction' with {'field_id':'query2', 'query':searchTerm} %}
 
 {% if estimated %}
     {% include 'LiipSearchBundle:Search:search_results_summary.html.twig' with {'count':estimated, 'query':searchTerm, 'translationDomain': translationDomain} %}

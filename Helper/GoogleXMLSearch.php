@@ -201,6 +201,16 @@ class GoogleXMLSearch {
         } else {
             return null;
         }
+
+        // fix estimatedTotalItemCount if query start does not reflect startNumber
+        // which means the estimatedTotalItemCount is wrong
+        $queryStartNode = $xpath->query('/GSP/PARAM[@name="start"]');
+        if($queryStartNode->length > 0 && $queryStartNode->item(0)->hasAttribute('value')) {
+            $queryStartNumber = (int)$queryStartNode->item(0)->getAttribute('value');
+            if($startNumber < $queryStartNumber) {
+                $pagingInformation['estimatedTotalItemCount'] = $endNumber;
+            }
+        }
         return $pagingInformation;
     }
 

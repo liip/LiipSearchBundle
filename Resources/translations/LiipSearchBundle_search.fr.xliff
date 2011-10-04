@@ -8,7 +8,7 @@
             </trans-unit>
             <trans-unit id="2">
                 <source>search_noresults</source>
-                <target>Saucun résultat trouvé</target>
+                <target>Aucun résultat trouvé</target>
             </trans-unit>
             <trans-unit id="3">
                 <source>search_failure</source>
@@ -16,7 +16,7 @@
             </trans-unit>
             <trans-unit id="4">
                 <source>search</source>
-                <target>rechercher</target>
+                <target>Rechercher</target>
             </trans-unit>
         </body>
     </file>
