@@ -82,6 +82,31 @@ Your search action method might look like this:
                 'searchResults' => $searchResults,
             ));
 
+You can include the default search box by rendering the showSearchBox action of the default search controller:
+
+    {% render 'liip_search_default_controller:showSearchBoxAction' with {'field_id':'query', 'query':'last_query'} %}
+
+The parameters you must pass are:
+
+* field_id - The ID of the html text field for the search. This parameter allows you to have more than one search box in a single page
+* query - [optional] Allows you to specify the last searched term with which the search input field will be populated
+
+Overriding the templates
+------------------------
+
+The templates used by the bundle can be overridden by the normal Symfony2 mechanism to replace predefined
+templates.
+
+Your version of the templates must go into app/Resources.
+
+See http://symfony.com/doc/2.0/book/templating.html#overriding-bundle-templates
+
+Overriding the translations
+---------------------------
+
+The translations used by the bundle can be overridden by creating an XLIFF file with the correct translations
+key and then setting the liip_search.translation_domain to the name of your translation file.
+
 
 TODO
 ----
