@@ -36,7 +36,7 @@ class DefaultController
      * @param string $query
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showSearchBoxAction($field_id, $query)
+    public function showSearchBoxAction($field_id, $query ='')
     {
         $engine = $this->container->get('templating');
         return new Response(

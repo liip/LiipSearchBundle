@@ -53,7 +53,7 @@ These parameters can be configured in your config.yml:
 * liip_search.pager_max_adjoining_items
   * default value: 2
   * How many page links to always show before and after the current page
-  * For example, with a value of 2, on page 6 of the results, it would show <extemity pages> ... 4 5 *6* 7 8 ... <extemity pages>
+  * For example, with a value of 2, on page 6 of the results, it would show <extremity pages> ... 4 5 *6* 7 8 ... <extremity pages>
 
 * liip_search.query_param_name: q
   * default value: 'q'
