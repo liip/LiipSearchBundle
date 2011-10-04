@@ -16,6 +16,7 @@ use Liip\SearchBundle\Helper\GoogleXMLSearch;
 
 /**
  * class for search
+ * TODO: implement SearchInterface
  */
 class GoogleSearch
 {
