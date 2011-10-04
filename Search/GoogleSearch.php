@@ -11,7 +11,6 @@
 
 namespace Liip\SearchBundle\Search;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Liip\SearchBundle\Helper\GoogleXMLSearch;
 
