@@ -9,6 +9,12 @@ use Symfony\Component\Config\FileLocator;
 
 class LiipSearchExtension extends Extension
 {
+    /**
+     * Loads the services based on your application configuration.
+     *
+     * @param array $configs
+     * @param ContainerBuilder $container
+     */
     public function load(array $configs, ContainerBuilder $container)
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));

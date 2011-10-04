@@ -19,6 +19,14 @@ class GoogleSearch
     protected $restrictByLanguage;
     protected $translationDomain;
 
+    /**
+     * @param \Symfony\Component\DependencyInjection\Container $container
+     * @param \Liip\SearchBundle\Helper\GoogleXMLSearch $google_search
+     * @param \Liip\SearchBundle\Pager\Pager $search_pager
+     * @param integer $results_per_page
+     * @param boolean $restrict_by_language
+     * @param string $translation_domain
+     */
     public function __construct($container, GoogleXMLSearch $google_search, $search_pager, $results_per_page, $restrict_by_language, $translation_domain)
     {
         $this->container = $container;
@@ -30,7 +38,10 @@ class GoogleSearch
     }
 
     /**
-     * search method
+     * Search method
+     * @param mixed $page The current result page to show or null
+     * @param mixed $query The current search query or null
+     * @return string
      */
     public function search($page =  null, $query = null)
     {

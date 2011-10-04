@@ -18,6 +18,11 @@ class DefaultController
      */
     protected $router;
 
+    /**
+     * @param \Symfony\Component\DependencyInjection\Container $container
+     * @param \Symfony\Component\Routing\Router $router
+     * @return \Liip\SearchBundle\Controller\DefaultController
+     */
     public function __construct($container, $router)
     {
         $this->container = $container;

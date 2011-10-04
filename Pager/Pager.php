@@ -11,6 +11,15 @@ class Pager
     protected $maxAdjoiningItems;
     protected $templatingEngine;
 
+    /**
+     * @param \Symfony\Component\DependencyInjection\Container $container
+     * @param \Symfony\Component\Routing\Router $router
+     * @param string $search_route
+     * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating_engine
+     * @param integer $max_extremity_items
+     * @param integer $max_adjoining_items
+     * @return \Liip\SearchBundle\Pager\Pager
+     */
     public function __construct($container, $router, $search_route, $templating_engine, $max_extremity_items, $max_adjoining_items)
     {
         $this->container = $container;
@@ -21,6 +30,14 @@ class Pager
         $this->templatingEngine = $templating_engine;
     }
 
+    /**
+     * @param integer $estimated
+     * @param integer $start
+     * @param integer $perPage
+     * @param string $query
+     * @param string $translationDomain
+     * @return void
+     */
     public function renderPaging($estimated, $start, $perPage, $query, $translationDomain)
     {
         $paging = $this->paging($estimated, $start, $perPage, $query);
@@ -33,6 +50,13 @@ class Pager
         );
     }
 
+    /**
+     * @param integer $estimated
+     * @param integer $start
+     * @param integer $perPage
+     * @param string $query
+     * @return array
+     */
     public function paging($estimated, $start, $perPage, $query)
     {
         $pagingFirst = array();

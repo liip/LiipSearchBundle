@@ -8,6 +8,8 @@ class GoogleXMLSearch {
 
     /**
      * @param string $googleSearchKey key for cse search service
+     * @param string $restrict_to_site If search results should be restricted to one site, specify the site
+     * @return \Liip\SearchBundle\Helper\GoogleXMLSearch
      */
     public function __construct($google_search_key, $restrict_to_site)
     {
@@ -127,6 +129,11 @@ class GoogleXMLSearch {
         return $encoded;
     }
 
+    /**
+     * Extract the search results from the Google search response
+     * @param DOMDocument $doc
+     * @return array
+     */
     protected function extractSearchResults($doc)
     {
         $results = array(
@@ -153,6 +160,11 @@ class GoogleXMLSearch {
         return $results;
     }
 
+    /**
+     * Get spelling suggestions from Google search response
+     * @param DomXPath $xpath
+     * @return array
+     */
     protected function spellingSuggestions($xpath)
     {
         $spellingSuggestions = array();
@@ -214,6 +226,11 @@ class GoogleXMLSearch {
         return $pagingInformation;
     }
 
+    /**
+     * Extract the search results from the Google search response
+     * @param DomXPath $xpath
+     * @return array
+     */
     protected function searchResultItems($xpath)
     {
         $items = array();
