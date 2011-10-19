@@ -1,6 +1,6 @@
 services:
     LiipGoogleSearch:
-        class: Liip\SearchBundle\Search\GoogleSearch
+        class: Liip\SearchBundle\Google\GoogleSearch
         arguments:
             container: "@service_container"
             google_xml_search: "@LiipGoogleXMLAPISearch"
@@ -10,7 +10,7 @@ services:
             translation_domain: "%liip_search.translation_domain%"
 
     LiipGoogleXMLAPISearch:
-        class: Liip\SearchBundle\Helper\GoogleXMLSearch
+        class: Liip\SearchBundle\Google\GoogleXMLSearch
         arguments:
             google_search_key: "%liip_search.google_search_key%"
             restrict_to_site:  "%liip_search.restrict_to_site%"

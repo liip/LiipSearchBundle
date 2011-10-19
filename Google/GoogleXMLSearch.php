@@ -9,7 +9,7 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Liip\SearchBundle\Helper;
+namespace Liip\SearchBundle\Google;
 
 class GoogleXMLSearch {
 
@@ -18,7 +18,7 @@ class GoogleXMLSearch {
     /**
      * @param string $googleSearchKey key for cse search service
      * @param string $restrict_to_site If search results should be restricted to one site, specify the site
-     * @return \Liip\SearchBundle\Helper\GoogleXMLSearch
+     * @return \Liip\SearchBundle\Google\GoogleXMLSearch
      */
     public function __construct($google_search_key, $restrict_to_site)
     {
