@@ -1,21 +1,21 @@
 services:
-    LiipGoogleSearch:
+    liip_google_search:
         class: Liip\SearchBundle\Google\GoogleSearch
         arguments:
             container: "@service_container"
-            google_xml_search: "@LiipGoogleXMLAPISearch"
-            search_pager: "@LiipSearchPager"
+            google_xml_search: "@liip_google_xml_api_search"
+            search_pager: "@liip_search_pager"
             results_per_page: "%liip_search.results_per_page%"
             restrict_by_language: "%liip_search.restrict_by_language%"
             translation_domain: "%liip_search.translation_domain%"
 
-    LiipGoogleXMLAPISearch:
+    liip_google_xml_api_search:
         class: Liip\SearchBundle\Google\GoogleXMLSearch
         arguments:
             google_search_key: "%liip_search.google_search_key%"
             restrict_to_site:  "%liip_search.restrict_to_site%"
 
-    LiipSearchPager:
+    liip_search_pager:
         class: Liip\SearchBundle\Pager\Pager
         arguments:
             container: "@service_container"

@@ -68,14 +68,14 @@ Usage
 Include the bundle in your app/autoload.php and app/Kernel.php.
 
 Create an action and an associated route for searching.
-The action should use the LiipGoogleSearch service to fetch the HTML results
+The action should use the liip_google_search service to fetch the HTML results
 of the submitted search term and page value.  This HTML can then be included,
 raw, in an appropriate template that includes all of your site-specific paraphernalia
 (header, navigation, footer, css, javascript, etc).
 
 Your search action method might look like this:
 
-    $searchResults = $this->container->get('LiipGoogleSearch')->search();
+    $searchResults = $this->container->get('liip_google_search')->search();
     return $this->render('MyBundle:Search:search.html.twig',
             array(
                 'title' => 'Search'
