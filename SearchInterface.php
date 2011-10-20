@@ -27,20 +27,6 @@ interface SearchInterface
     function search($page =  null, $query = null, $lang = null, $options = array());
 
     /**
-     * Extract the page from the request (looks in GET, then POST).
-     * If not present in the request or if less than 1, 1 will be returned.
-     * @return int
-     */
-    function requestedPage();
-
-    /**
-     * Extract the trimmed query from the request (looks in GET, then POST).
-     * If not present in the request, an empty string will be returned.
-     * @return string
-     */
-    function requestedQuery();
-
-    /**
      * Determine language used to restrict search results, if one should be used at all.
      * If results should not be restricted by language, this will return false.
      * @return mixed string(=locale) or bool(=false)

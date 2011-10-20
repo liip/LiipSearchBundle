@@ -2,7 +2,7 @@
 {%trans from translationDomain %}search{% endtrans %}
 {% endset %}
 
-<form class="quick_search" action="{{ search_route }}">
+<form class="quick_search" action="{{ searchRoute }}">
     <label for="{{ field_id|default('query') }}">{% trans from translationDomain %}Search this site{% endtrans %}</label>
     <input type="text" class="query" id="{{ field_id|default('query') }}" name="{{ query_param_name }}" value="{{ searchTerm|default(default_value) }}" />
     <input type="submit" class="button" value="{% trans from translationDomain %}send{% endtrans %}" />

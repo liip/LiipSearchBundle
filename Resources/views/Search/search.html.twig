@@ -5,9 +5,9 @@
     {% include 'LiipSearchBundle:Search:search_results_summary.html.twig' with {'count':estimated, 'query':searchTerm, 'translationDomain': translationDomain} %}
         <div id="search-results">
             {% include 'LiipSearchBundle:Search:search_results.html.twig' with {'searchResults':searchResults, 'query':searchTerm} %}
-            {% if pagingHtml  %}
+            {% if showPaging  %}
                 <div class="pager">
-                    {{ pagingHtml |raw }}
+                    {% render 'liip_search_default_controller:showPagingAction' with {'estimated':estimated, 'start': start, 'perPage': perPage, 'query': searchTerm, 'translationDomain': translationDomain} %}
                 </div>
             {% endif %}
         </div>

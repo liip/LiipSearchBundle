@@ -18,7 +18,6 @@ class Pager
     protected $searchRoute;
     protected $maxExtremityItems;
     protected $maxAdjoiningItems;
-    protected $templatingEngine;
 
     /**
      * @param \Symfony\Component\DependencyInjection\Container $container
@@ -29,34 +28,13 @@ class Pager
      * @param integer $max_adjoining_items
      * @return \Liip\SearchBundle\Pager\Pager
      */
-    public function __construct($container, $router, $search_route, $templating_engine, $max_extremity_items, $max_adjoining_items)
+    public function __construct($container, $router, $search_route, $max_extremity_items, $max_adjoining_items)
     {
         $this->container = $container;
         $this->router = $router;
         $this->searchRoute = $search_route;
         $this->maxExtremityItems = $max_extremity_items;
         $this->maxAdjoiningItems = $max_adjoining_items;
-        $this->templatingEngine = $templating_engine;
-    }
-
-    /**
-     * @param integer $estimated
-     * @param integer $start
-     * @param integer $perPage
-     * @param string $query
-     * @param string $translationDomain
-     * @return void
-     */
-    public function renderPaging($estimated, $start, $perPage, $query, $translationDomain)
-    {
-        $paging = $this->paging($estimated, $start, $perPage, $query);
-        return $this->templatingEngine->render('LiipSearchBundle:Search:paging.html.twig',
-            array(
-                'paging' => $paging,
-                'estimated' => $estimated,
-                'translationDomain' => $translationDomain,
-            )
-        );
     }
 
     /**

@@ -11,11 +11,10 @@
 
 namespace Liip\SearchBundle\Controller;
 
-use Symfony\Component\DependencyInjection\Container,
-    Symfony\Component\Routing\Router,
-    Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\DependencyInjection\ContainerInterface,
+    Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-class DefaultController
+class DefaultController extends Controller
 {
     /**
      * @var \Symfony\Component\DependencyInjection\Container
@@ -23,19 +22,12 @@ class DefaultController
     protected $container;
 
     /**
-     * @var \Symfony\Component\Routing\Router
-     */
-    protected $router;
-
-    /**
-     * @param \Symfony\Component\DependencyInjection\Container $container
-     * @param \Symfony\Component\Routing\Router $router
+     * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
      * @return \Liip\SearchBundle\Controller\DefaultController
      */
-    public function __construct($container, $router)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->router = $router;
     }
 
     /**
@@ -47,15 +39,34 @@ class DefaultController
      */
     public function showSearchBoxAction($field_id, $query ='')
     {
-        $engine = $this->container->get('templating');
-        return new Response(
-            $engine->render('LiipSearchBundle:Search:search_box.html.twig', array(
-                'search_route' =>  $this->router->generate('search'),
+        return $this->render('LiipSearchBundle:Search:search_box.html.twig', array(
+                'searchRoute' =>  $this->get('router')->generate($this->container->getParameter('liip_search.search_route')),
                 'translationDomain' =>  $this->container->getParameter('liip_search.translation_domain'),
                 'field_id'  =>  $field_id,
                 'query_param_name' => $this->container->getParameter('liip_search.query_param_name'),
                 'searchTerm'    =>  $query,
-            ))
+            )
+        );
+    }
+
+    /**
+     * @param integer $estimated
+     * @param integer $start
+     * @param integer $perPage
+     * @param string $query
+     * @param string $translationDomain
+     * @return void
+     */
+    public function showPagingAction($estimated, $start, $perPage, $query, $translationDomain)
+    {
+        $pager = $this->container->get('liip_search_pager');
+        $paging = $pager->paging($estimated, $start, $perPage, $query);
+        return $this->render('LiipSearchBundle:Search:paging.html.twig',
+            array(
+                'paging' => $paging,
+                'estimated' => $estimated,
+                'translationDomain' => $translationDomain,
+            )
         );
     }
 }

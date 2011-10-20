@@ -9,45 +9,54 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Liip\SearchBundle\Google;
+namespace Liip\SearchBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Liip\SearchBundle\SearchInterface;
 use Liip\SearchBundle\Google\GoogleXMLSearch;
+use Liip\SearchBundle\Helper\SearchParams;
 
 /**
  * Class for search with google's XML API interface.
  * Requires a configured "Google site search" to be able to make queries.
  */
-class GoogleSearch implements SearchInterface
+class GoogleSearchController extends Controller implements SearchInterface
 {
 
     protected $container;
-    protected $searchPager;
     protected $google;
     protected $perPage;
     protected $restrictByLanguage;
     protected $translationDomain;
+    protected $pageParameterKey;
+    protected $queryParameterKey;
+    protected $searchRoute;
     protected $request;
 
     /**
      * @param \Symfony\Component\DependencyInjection\Container $container
      * @param \Liip\SearchBundle\Google\GoogleXMLSearch $google_search
-     * @param \Liip\SearchBundle\Pager\Pager $search_pager
      * @param integer $results_per_page
      * @param boolean $restrict_by_language
      * @param string $translation_domain
+     * @param string $page_parameter_key parameter name used for page
+     * @param string $query_parameter_key parameter name used for search term
+     * @param string $search_route route used for submitting search query
      */
-    public function __construct(ContainerInterface $container, GoogleXMLSearch $google_search, $search_pager,
-        $results_per_page, $restrict_by_language, $translation_domain)
+    public function __construct(ContainerInterface $container, GoogleXMLSearch $google_search, $results_per_page, $restrict_by_language,
+        $translation_domain, $page_parameter_key, $query_parameter_key, $search_route)
     {
         $this->container = $container;
         $this->google = $google_search;
-        $this->searchPager = $search_pager;
         $this->perPage = $results_per_page;
         $this->restrictByLanguage = $restrict_by_language;
         $this->translationDomain = $translation_domain;
+        $this->pageParameterKey = $page_parameter_key;
+        $this->queryParameterKey = $query_parameter_key;
+        $this->searchRoute = $search_route;
+        $this->request = $this->getRequest();
     }
 
     /**
@@ -61,16 +70,14 @@ class GoogleSearch implements SearchInterface
     public function search($page =  null, $query = null, $lang = null, $options = array())
     {
 
-        $templateEngine = $this->container->get('templating');
-
         if (null === $page) {
             // If the page param is not given, it's value is read in the request
-            $page = $this->requestedPage();
+            $page = SearchParams::requestedPage($this->request, $this->pageParameterKey);
         }
 
         if (null === $query) {
             // If the query param is not given, it's value is read in the request
-            $query = $this->requestedQuery();
+            $query = SearchParams::requestedQuery($this->request, $this->queryParameterKey);
         }
 
         $lang = $this->queryLanguage($lang);
@@ -78,7 +85,7 @@ class GoogleSearch implements SearchInterface
         try {
             $searchResults = $this->google->getSearchResults($query, $lang, ($page-1) * $this->perPage, $this->perPage);
         } catch(\Exception $e) {
-            return $templateEngine->render('LiipSearchBundle:Search:failure.html.twig', array('searchTerm' => $query));
+            return $this->render('LiipSearchBundle:Search:failure.html.twig', array('searchTerm' => $query));
         }
 
         if (!isset($searchResults['information']['paging'])) {
@@ -90,63 +97,17 @@ class GoogleSearch implements SearchInterface
             $showPaging = $estimated > $this->perPage;
         }
 
-        if ($showPaging) {
-            $pagingHtml = $this->searchPager->renderPaging($estimated, $start, $this->perPage, $query, $this->translationDomain);
-        } else {
-            $pagingHtml = '';
-        }
-
-        return $templateEngine->render('LiipSearchBundle:Search:search.html.twig',
+        return $this->render('LiipSearchBundle:Search:search.html.twig',
                 array(
                     'searchTerm' => $query,
                     'searchResults' => $searchResults['items'],
                     'estimated' => $estimated,
-                    'pagingHtml' => $pagingHtml,
                     'translationDomain' => $this->translationDomain,
-                    'search_route' => $this->container->getParameter('liip_search.search_route'),
+                    'showPaging' => $showPaging,
+                    'start' => $start,
+                    'perPage' => $this->perPage,
+                    'searchRoute' => $this->searchRoute,
                 ));
-    }
-
-    /**
-     * Extract the page from the request (looks in GET, then POST).
-     * If not present in the request or if less than 1, 1 will be returned.
-     * @return int
-     */
-    public function requestedPage()
-    {
-        $request = $this->getRequest();
-        $key = $this->container->getParameter('liip_search.page_param_name');
-        $page = $request->query->get($key);
-        if (null === $page) {
-            $page = $request->request->get($key);
-            if (null === $page) {
-                return 1;
-            }
-        }
-        $page = intval($page);
-        if ($page < 1) {
-            $page = 1;
-        }
-        return $page;
-    }
-
-    /**
-     * Extract the trimmed query from the request (looks in GET, then POST).
-     * If not present in the request, an empty string will be returned.
-     * @return string
-     */
-    public function requestedQuery()
-    {
-        $request = $this->getRequest();
-        $key = $this->container->getParameter('liip_search.query_param_name');
-        $query = $request->query->get($key);
-        if (null === $query) {
-            $query = $request->request->get($key);
-            if (null === $query) {
-                return '';
-            }
-        }
-        return trim($query);
     }
 
     /**
@@ -162,17 +123,6 @@ class GoogleSearch implements SearchInterface
         if (null !== $lang) {
             return $lang;
         }
-        return $this->getRequest()->getSession()->getLocale();
-    }
-
-    /**
-     * @return \Symfony\Component\HttpFoundation\Request
-     */
-    protected function getRequest()
-    {
-        if (null === $this->request) {
-            $this->request = $this->container->get('request');
-        }
-        return $this->request;
+        return $this->request->getSession()->getLocale();
     }
 }
