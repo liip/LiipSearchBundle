@@ -24,26 +24,26 @@ interface SearchInterface
      * @param array $options any options which should be passed along to underlying search engine
      * @return string
      */
-    public function search($page =  null, $query = null, $lang = null, $options = array());
+    function search($page =  null, $query = null, $lang = null, $options = array());
 
     /**
      * Extract the page from the request (looks in GET, then POST).
      * If not present in the request or if less than 1, 1 will be returned.
      * @return int
      */
-    public function requestedPage();
+    function requestedPage();
 
     /**
      * Extract the trimmed query from the request (looks in GET, then POST).
      * If not present in the request, an empty string will be returned.
      * @return string
      */
-    public function requestedQuery();
+    function requestedQuery();
 
     /**
      * Determine language used to restrict search results, if one should be used at all.
      * If results should not be restricted by language, this will return false.
      * @return mixed string(=locale) or bool(=false)
      */
-    public function queryLanguage($lang = null);
+    function queryLanguage($lang = null);
 }
