@@ -11,23 +11,44 @@
 
 namespace Liip\SearchBundle\Controller;
 
-use Symfony\Component\DependencyInjection\ContainerInterface,
-    Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response,
+    Symfony\Bundle\FrameworkBundle\Templating\EngineInterface,
+    Symfony\Component\Routing\Router;
 
-class DefaultController extends Controller
+class DefaultController
 {
     /**
-     * @var \Symfony\Component\DependencyInjection\Container
+     * @var \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface
      */
-    protected $container;
+    protected $templatingEngine;
 
     /**
-     * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+     * @var \Symfony\Component\Routing\Router
+     */
+    protected $router;
+
+    protected $pager;
+    protected $translationDomain;
+    protected $queryParameterKey;
+    protected $searchRoute;
+
+    /**
+     * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating_engine
+     * @param \Symfony\Component\Routing\Router $router
+     * @param $pager search pager service
+     * @param string $translation_domain
+     * @param string $query_parameter_key parameter name used for search term
+     * @param string $search_route route used for submitting search query
      * @return \Liip\SearchBundle\Controller\DefaultController
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(EngineInterface $templating_engine, Router $router, $pager, $translation_domain, $query_parameter_key, $search_route)
     {
-        $this->container = $container;
+        $this->templatingEngine = $templating_engine;
+        $this->router = $router;
+        $this->pager = $pager;
+        $this->translationDomain = $translation_domain;
+        $this->queryParameterKey = $query_parameter_key;
+        $this->searchRoute = $search_route;
     }
 
     /**
@@ -39,14 +60,13 @@ class DefaultController extends Controller
      */
     public function showSearchBoxAction($field_id, $query ='')
     {
-        return $this->render('LiipSearchBundle:Search:search_box.html.twig', array(
-                'searchRoute' =>  $this->get('router')->generate($this->container->getParameter('liip_search.search_route')),
-                'translationDomain' =>  $this->container->getParameter('liip_search.translation_domain'),
+        return new Response($this->templatingEngine->render('LiipSearchBundle:Search:search_box.html.twig', array(
+                'searchRoute' =>  $this->router->generate($this->searchRoute),
+                'translationDomain' =>  $this->translationDomain,
                 'field_id'  =>  $field_id,
-                'query_param_name' => $this->container->getParameter('liip_search.query_param_name'),
+                'query_param_name' => $this->queryParameterKey,
                 'searchTerm'    =>  $query,
-            )
-        );
+            )));
     }
 
     /**
@@ -59,14 +79,12 @@ class DefaultController extends Controller
      */
     public function showPagingAction($estimated, $start, $perPage, $query, $translationDomain)
     {
-        $pager = $this->container->get('liip_search_pager');
-        $paging = $pager->paging($estimated, $start, $perPage, $query);
-        return $this->render('LiipSearchBundle:Search:paging.html.twig',
+        $paging = $this->pager->paging($estimated, $start, $perPage, $query);
+        return new Response($this->templatingEngine->render('LiipSearchBundle:Search:paging.html.twig',
             array(
                 'paging' => $paging,
                 'estimated' => $estimated,
                 'translationDomain' => $translationDomain,
-            )
-        );
+            )));
     }
 }

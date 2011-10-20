@@ -2,8 +2,8 @@ services:
     liip_google_search:
         class: Liip\SearchBundle\Controller\GoogleSearchController
         arguments:
-            container: "@service_container"
             google_xml_search: "@liip_google_xml_api_search"
+            templating_engine: "@templating"
             results_per_page: "%liip_search.results_per_page%"
             restrict_by_language: "%liip_search.restrict_by_language%"
             translation_domain: "%liip_search.translation_domain%"
@@ -20,16 +20,19 @@ services:
     liip_search_pager:
         class: Liip\SearchBundle\Pager\Pager
         arguments:
-            container: "@service_container"
             router: "@router"
             search_route: "%liip_search.search_route%"
             max_extremity_items: "%liip_search.pager_max_extremity_items%"
             max_adjoining_items: "%liip_search.pager_max_adjoining_items%"
             query_param_name: "%liip_search.query_param_name%"
-            page_param_name: "%liip_search.query_param_name%"
+            page_param_name: "%liip_search.page_param_name%"
 
     liip_search_default_controller:
         class: Liip\SearchBundle\Controller\DefaultController
-        scope: request
         arguments:
-            container: "@service_container"
+            templating_engine: "@templating"
+            router: "@router"
+            pager: "@liip_search_pager"
+            translation_domain: "%liip_search.translation_domain%"
+            query_param_name: "%liip_search.query_param_name%"
+            search_route: "%liip_search.search_route%"

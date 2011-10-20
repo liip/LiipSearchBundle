@@ -13,7 +13,6 @@ namespace Liip\SearchBundle\Pager;
 
 class Pager
 {
-    protected $container;
     protected $router;
     protected $searchRoute;
     protected $maxExtremityItems;
@@ -22,7 +21,6 @@ class Pager
     protected $pageParameterKey;
 
     /**
-     * @param \Symfony\Component\DependencyInjection\Container $container
      * @param \Symfony\Component\Routing\Router $router
      * @param string $search_route
      * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating_engine
@@ -32,10 +30,9 @@ class Pager
      * @param string $query_parameter_key
      * @return \Liip\SearchBundle\Pager\Pager
      */
-    public function __construct($container, $router, $search_route, $max_extremity_items, $max_adjoining_items,
+    public function __construct($router, $search_route, $max_extremity_items, $max_adjoining_items,
         $query_parameter_key, $page_parameter_key)
     {
-        $this->container = $container;
         $this->router = $router;
         $this->searchRoute = $search_route;
         $this->maxExtremityItems = $max_extremity_items;
@@ -122,4 +119,3 @@ class Pager
             );
     }
 }
-

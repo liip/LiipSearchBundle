@@ -10,6 +10,7 @@
  */
 
 namespace Liip\SearchBundle;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class for search
@@ -22,14 +23,17 @@ interface SearchInterface
      * @param mixed $query string current search query or null
      * @param mixed $lang string language to use for restricting search results, or null
      * @param array $options any options which should be passed along to underlying search engine
-     * @return string
+     * @param \Symfony\Component\HttpFoundation\Request current request object, will be automatically injected by symfony when called as an action
+     * @return string rendered search results
      */
-    function search($page =  null, $query = null, $lang = null, $options = array());
+    function searchAction($page =  null, $query = null, $lang = null, $options = array(), Request $request = null);
 
     /**
      * Determine language used to restrict search results, if one should be used at all.
      * If results should not be restricted by language, this will return false.
+     * @param string $lang
+     * @param \Symfony\Component\HttpFoundation\Request $request
      * @return mixed string(=locale) or bool(=false)
      */
-    function queryLanguage($lang = null);
+    function queryLanguage($lang = null, Request $request);
 }
