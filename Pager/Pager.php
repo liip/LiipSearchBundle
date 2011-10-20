@@ -18,6 +18,8 @@ class Pager
     protected $searchRoute;
     protected $maxExtremityItems;
     protected $maxAdjoiningItems;
+    protected $queryParameterKey;
+    protected $pageParameterKey;
 
     /**
      * @param \Symfony\Component\DependencyInjection\Container $container
@@ -26,15 +28,20 @@ class Pager
      * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating_engine
      * @param integer $max_extremity_items
      * @param integer $max_adjoining_items
+     * @param string $page_parameter_key
+     * @param string $query_parameter_key
      * @return \Liip\SearchBundle\Pager\Pager
      */
-    public function __construct($container, $router, $search_route, $max_extremity_items, $max_adjoining_items)
+    public function __construct($container, $router, $search_route, $max_extremity_items, $max_adjoining_items,
+        $query_parameter_key, $page_parameter_key)
     {
         $this->container = $container;
         $this->router = $router;
         $this->searchRoute = $search_route;
         $this->maxExtremityItems = $max_extremity_items;
         $this->maxAdjoiningItems = $max_adjoining_items;
+        $this->queryParameterKey = $query_parameter_key;
+        $this->pageParameterKey = $page_parameter_key;
     }
 
     /**
@@ -53,9 +60,6 @@ class Pager
 
         $currentPage = ($start - 1) / $perPage + 1;
 
-        $page_param_name = $this->container->getParameter('liip_search.page_param_name');
-        $query_param_name = $this->container->getParameter('liip_search.query_param_name');
-
         if ($estimated > $perPage) {
             // results start from 1, not 0.  Look for previous pages.
             $resultNum = $start - 1;
@@ -71,13 +75,13 @@ class Pager
 
             if ($hasFirstPages) {
                 for ($i = 1; $i <= $this->maxExtremityItems; $i++) {
-                    $pagingFirst[$i] = $this->router->generate('search', array($query_param_name => $query, $page_param_name => $i));
+                    $pagingFirst[$i] = $this->router->generate($this->searchRoute, array($this->queryParameterKey => $query, $this->pageParameterKey => $i));
                 }
             }
 
             for ($i = 0; $i < $maxPrevious  && $resultNum > 0; $i++) {
                 $pageNum = $resultNum / $perPage;
-                $pagingPrev[$pageNum] = $this->router->generate('search', array($query_param_name => $query, $page_param_name => $pageNum));
+                $pagingPrev[$pageNum] = $this->router->generate($this->searchRoute, array($this->queryParameterKey => $query, $this->pageParameterKey => $pageNum));
                 $resultNum -= $perPage;
             }
             $pagingPrev = array_reverse($pagingPrev, true);
@@ -96,14 +100,14 @@ class Pager
 
             for ($i = 0; $i < $maxNext && $resultNum < $estimated; $i++) {
                 $pageNum = $resultNum / $perPage + 1;
-                $pagingNext[$pageNum] = $this->router->generate('search', array($query_param_name => $query, $page_param_name => $pageNum));
+                $pagingNext[$pageNum] = $this->router->generate($this->searchRoute, array($this->queryParameterKey => $query, $this->pageParameterKey => $pageNum));
                 $resultNum += $perPage;
             }
 
             if ($hasLastPages) {
                 $lastPage = (int)($estimated / $perPage) + 1;
                 for ($i = $lastPage - $this->maxExtremityItems + 1; $i <= $lastPage; $i++) {
-                    $pagingLast[$i] = $this->router->generate('search', array($query_param_name => $query, $page_param_name => $i));
+                    $pagingLast[$i] = $this->router->generate($this->searchRoute, array($this->queryParameterKey => $query, $this->pageParameterKey => $i));
                 }
 
             }
