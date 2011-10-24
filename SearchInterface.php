@@ -19,14 +19,14 @@ interface SearchInterface
 {
     /**
      * Search method
-     * @param mixed $page string current result page to show or null
      * @param mixed $query string current search query or null
+     * @param mixed $page string current result page to show or null
      * @param mixed $lang string language to use for restricting search results, or null
      * @param array $options any options which should be passed along to underlying search engine
      * @param \Symfony\Component\HttpFoundation\Request current request object, will be automatically injected by symfony when called as an action
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    function searchAction($page =  null, $query = null, $lang = null, $options = array(), Request $request = null);
+    function searchAction($query = null, $page = null, $lang = null, $options = array(), Request $request = null);
 
     /**
      * Determine language used to restrict search results, if one should be used at all.
