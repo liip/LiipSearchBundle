@@ -64,7 +64,7 @@ class GoogleSearchController implements SearchInterface
      * @param mixed $lang string language to use for restricting search results, or null
      * @param array $options any options which should be passed along to underlying search engine
      * @param \Symfony\Component\HttpFoundation\Request current request object, will be automatically injected by symfony when called as an action
-     * @return string
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function searchAction($page =  null, $query = null, $lang = null, $options = array(), Request $request = null)
     {
