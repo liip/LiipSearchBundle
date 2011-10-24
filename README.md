@@ -67,21 +67,6 @@ Usage
 -----
 Include the bundle in your app/autoload.php and app/Kernel.php.
 
-Create an action and an associated route for searching.
-The action should use the liip_google_search service to fetch the HTML results
-of the submitted search term and page value.  This HTML can then be included,
-raw, in an appropriate template that includes all of your site-specific paraphernalia
-(header, navigation, footer, css, javascript, etc).
-
-Your search action method might look like this:
-
-    $searchResults = $this->container->get('liip_google_search')->search();
-    return $this->render('MyBundle:Search:search.html.twig',
-            array(
-                'title' => 'Search'
-                'searchResults' => $searchResults,
-            ));
-
 You can include the default search box by rendering the showSearchBox action of the default search controller:
 
     {% render 'liip_search_default_controller:showSearchBoxAction' with {'field_id':'query', 'query':'last_query'} %}
@@ -90,6 +75,46 @@ The parameters you must pass are:
 
 * field_id - The ID of the html text field for the search. This parameter allows you to have more than one search box in a single page
 * query - [optional] Allows you to specify the last searched term with which the search input field will be populated
+
+
+Create a route for the search action.  You can either define your own action, or
+use the liip_google_search:search action as the controller for the route.
+
+If you define you own action, you'll need to provide the query and page parameters when
+rendering the liip_google_search search action from the twig template.
+Your custom search action method might look like this:
+
+    use Liip\SearchBundle\Helper\SearchParams;
+    ...
+    public function searchAction()
+    {
+        return $this->render('MyBundle:Search:search.html.twig',
+                array(
+                    'title' => 'Search'
+                    'query' => SearchParams::requestedQuery($request, $queryParamName),
+                    'page'  => SearchParams::requestedPage($request, $pageParamName),
+                ));
+    }
+
+Where MyBundle:Search:search.html.twig renders the liip_google_search search action:
+
+    {% render "liip_google_search:searchAction" with {'query': query, 'page': page} %}
+
+When rendering from a template like this, the query and page parameters must be provided.
+When rendered from a template, a subrequest is used, and liip_google_search:searchAction
+will not have access to the original Request object, and so cannot read the query and
+page parameters from the Request.
+
+
+If, on the other hand, you choose to use the liip_google_search:search action, your route
+will look something like this:
+
+    search:
+        pattern: /search
+        defaults: { _controller: liip_google_search:search }
+
+If you're doing this, you'll want to override the templates so that you can include your
+site-specific layout.
 
 Overriding the templates
 ------------------------
