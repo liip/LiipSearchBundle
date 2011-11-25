@@ -16,6 +16,7 @@ services:
         arguments:
             google_search_key: "%liip_search.google_search_key%"
             restrict_to_site:  "%liip_search.restrict_to_site%"
+            restrict_to_labels: "%liip_search.restrict_to_labels%"
 
     liip_search_pager:
         class: Liip\SearchBundle\Pager\Pager

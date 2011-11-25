@@ -30,8 +30,14 @@ These parameters can be configured in your config.yml:
 * liip_search.restrict_to_site
   * default value: ''
   * example value: 'www.example.com'
-  * With the default, empty value, all domains configured in the sitesearch account will be searched
-  * You may specify a domain here to restrict the search to a single domain if you have configured several domains to search in your sitesearch account
+  * With the default, empty value, all sites configured in the sitesearch account will be searched
+  * You may specify a site here to restrict the search to, if you have configured several sites to search in your sitesearch account
+
+* liip_search.restrict_to_labels
+  * default value: ''
+  * example value: ['onions', 'potatoes']
+  * With the default, empty value, no label is used to refine the search
+  * You may specify one or more labels to restrict the search to, if you have configured labels in your sitesearch account
 
 * liip_search.restrict_by_language
   * default value: false

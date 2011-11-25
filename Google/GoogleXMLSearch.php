@@ -15,15 +15,21 @@ class GoogleXMLSearch {
 
     protected $googleSearchKey;
 
+    protected $restrictToSite;
+
+    protected $restrictToLabels;
+
     /**
      * @param string $googleSearchKey key for cse search service
      * @param string $restrict_to_site If search results should be restricted to one site, specify the site
+     * @param array  $restrict_to_labels If search results should be restricted to one or more labels, specify the labels
      * @return \Liip\SearchBundle\Google\GoogleXMLSearch
      */
-    public function __construct($google_search_key, $restrict_to_site)
+    public function __construct($google_search_key, $restrict_to_site, $restrict_to_labels)
     {
         $this->googleSearchKey = $google_search_key;
         $this->restrictToSite = $restrict_to_site;
+        $this->restrictToLabels = $restrict_to_labels;
     }
 
     /**
@@ -112,9 +118,14 @@ class GoogleXMLSearch {
 
         if ($this->restrictToSite) {
             $params['as_sitesearch'] = $this->restrictToSite;
+        } elseif (!empty($this->restrictToLabels)) {
+            foreach ($this->restrictToLabels as $label) {
+                $encodedQuery .= '+more&3' . $label;
+            }
         }
 
         $queryString = '?' . http_build_query($params) . '&q=' . $encodedQuery;
+
         $url = 'http://www.google.com/cse' . $queryString;
         return $url;
     }
@@ -249,6 +260,7 @@ class GoogleXMLSearch {
         }
 
         foreach ($resultElements as $resultElement) {
+
             $item = array();
             $index = $resultElement->getAttribute('N');
 
