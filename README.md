@@ -61,12 +61,12 @@ These parameters can be configured in your config.yml:
   * How many page links to always show before and after the current page
   * For example, with a value of 2, on page 6 of the results, it would show <extremity pages> ... 4 5 *6* 7 8 ... <extremity pages>
 
-* liip_search.query_param_name: q
-  * default value: 'q'
+* liip_search.query_param_name
+  * default value: 'query'
   * The key string used for submitting the search term (e.g. /search?*q*=software)
 
 * liip_search.page_param_name
-  * default value: 'p'
+  * default value: 'page'
   * The key string used for submitting the page number (e.g. /search?q=software&*p*=3)
 
 Usage
@@ -83,8 +83,17 @@ The parameters you must pass are:
 * query - [optional] Allows you to specify the last searched term with which the search input field will be populated
 
 
-Create a route for the search action.  You can either define your own action, or
-use the liip_google_search:search action as the controller for the route.
+Create a route for the search action. The easiest is to just use the provided routing.yml from your main project routing.yml
+
+
+    liip_search:
+        resource: "@LiipSearchBundle/Resources/config/routing.yml"
+
+
+It defaults to the route /search . If you want a different route, you can either
+use the liip_google_search:search action as the controller for that route or define
+your own controller action, do whatever you need to do and then use the services
+provided by this bundle.
 
 If you define you own action, you'll need to provide the query and page parameters when
 rendering the liip_google_search search action from the twig template.

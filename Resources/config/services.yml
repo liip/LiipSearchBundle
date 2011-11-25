@@ -7,8 +7,8 @@ services:
             results_per_page: "%liip_search.results_per_page%"
             restrict_by_language: "%liip_search.restrict_by_language%"
             translation_domain: "%liip_search.translation_domain%"
+            page_param_name: "%liip_search.page_param_name%"
             query_param_name: "%liip_search.query_param_name%"
-            page_param_name: "%liip_search.query_param_name%"
             search_route: "%liip_search.search_route%"
 
     liip_google_xml_api_search:
