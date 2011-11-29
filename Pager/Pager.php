@@ -15,7 +15,8 @@ class Pager
 {
     protected $router;
     protected $searchRoute;
-    protected $maxExtremityItems;
+    protected $maxHeadItems;
+    protected $maxTailItems;
     protected $maxAdjoiningItems;
     protected $queryParameterKey;
     protected $pageParameterKey;
@@ -23,19 +24,20 @@ class Pager
     /**
      * @param \Symfony\Component\Routing\Router $router
      * @param string $search_route
-     * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating_engine
-     * @param integer $max_extremity_items
+     * @param integer $max_head_items
+     * @param integer $max_tail_items
      * @param integer $max_adjoining_items
-     * @param string $page_parameter_key
      * @param string $query_parameter_key
+     * @param string $page_parameter_key
      * @return \Liip\SearchBundle\Pager\Pager
      */
-    public function __construct($router, $search_route, $max_extremity_items, $max_adjoining_items,
+    public function __construct($router, $search_route, $max_head_items, $max_tail_items, $max_adjoining_items,
         $query_parameter_key, $page_parameter_key)
     {
         $this->router = $router;
         $this->searchRoute = $search_route;
-        $this->maxExtremityItems = $max_extremity_items;
+        $this->maxHeadItems = $max_head_items;
+        $this->maxTailItems = $max_tail_items;
         $this->maxAdjoiningItems = $max_adjoining_items;
         $this->queryParameterKey = $query_parameter_key;
         $this->pageParameterKey = $page_parameter_key;
@@ -55,23 +57,26 @@ class Pager
         $pagingNext = array();
         $pagingLast = array();
 
+        $dotsBefore = false;
+        $dotsAfter = false;
+
         $currentPage = ($start - 1) / $perPage + 1;
 
         if ($estimated > $perPage) {
             // results start from 1, not 0.  Look for previous pages.
             $resultNum = $start - 1;
-            if ($resultNum - $perPage * $this->maxAdjoiningItems > $this->maxExtremityItems * $perPage) {
+            if ($resultNum - $perPage * $this->maxAdjoiningItems > $this->maxHeadItems * $perPage) {
                 // there is a gap (...) between "first" and "previous" pages
                 $maxPrevious = $this->maxAdjoiningItems;
                 $hasFirstPages = true;
             } else {
                 // there is no gap
-                $maxPrevious = $this->maxExtremityItems + $this->maxAdjoiningItems;
+                $maxPrevious = $this->maxHeadItems + $this->maxAdjoiningItems;
                 $hasFirstPages = false;
             }
 
             if ($hasFirstPages) {
-                for ($i = 1; $i <= $this->maxExtremityItems; $i++) {
+                for ($i = 1; $i <= $this->maxHeadItems; $i++) {
                     $pagingFirst[$i] = $this->router->generate($this->searchRoute, array($this->queryParameterKey => $query, $this->pageParameterKey => $i));
                 }
             }
@@ -85,13 +90,13 @@ class Pager
 
             // Look for subsequent pages
             $resultNum = $start - 1 + $perPage;
-            if ($resultNum + $perPage * $this->maxAdjoiningItems < $estimated - $this->maxExtremityItems * $perPage) {
+            if ($resultNum + $perPage * $this->maxAdjoiningItems < $estimated - $this->maxTailItems * $perPage) {
                 // there is a gap (...) between "next" and "last" pages
                 $maxNext = $this->maxAdjoiningItems;
                 $hasLastPages = true;
             } else {
                 // there is no gap
-                $maxNext = $this->maxExtremityItems + $this->maxAdjoiningItems;
+                $maxNext = $this->maxTailItems + $this->maxAdjoiningItems;
                 $hasLastPages = false;
             }
 
@@ -101,13 +106,16 @@ class Pager
                 $resultNum += $perPage;
             }
 
+            $lastPage = (int)($estimated / $perPage) + 1;
+
             if ($hasLastPages) {
-                $lastPage = (int)($estimated / $perPage) + 1;
-                for ($i = $lastPage - $this->maxExtremityItems + 1; $i <= $lastPage; $i++) {
+                for ($i = $lastPage - $this->maxTailItems + 1; $i <= $lastPage; $i++) {
                     $pagingLast[$i] = $this->router->generate($this->searchRoute, array($this->queryParameterKey => $query, $this->pageParameterKey => $i));
                 }
-
             }
+
+            $dotsBefore = (sizeof($pagingFirst) > 0 || ($this->maxHeadItems === 0 && $currentPage-sizeof($pagingPrev) > 1));
+            $dotsAfter = (sizeof($pagingLast) > 0 || ($this->maxTailItems === 0 && $currentPage+sizeof($pagingNext) < $lastPage));
         }
 
         return array(
@@ -116,6 +124,8 @@ class Pager
             'current' => $currentPage,
             'next' => $pagingNext,
             'last' => $pagingLast,
-            );
+            'dotsBefore' => $dotsBefore,
+            'dotsAfter' => $dotsAfter
+        );
     }
 }

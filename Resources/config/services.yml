@@ -23,7 +23,8 @@ services:
         arguments:
             router: "@router"
             search_route: "%liip_search.search_route%"
-            max_extremity_items: "%liip_search.pager_max_extremity_items%"
+            max_head_items: "%liip_search.pager_max_head_items%"
+            max_tail_items: "%liip_search.pager_max_tail_items%"
             max_adjoining_items: "%liip_search.pager_max_adjoining_items%"
             query_param_name: "%liip_search.query_param_name%"
             page_param_name: "%liip_search.page_param_name%"

@@ -5,6 +5,8 @@
     {% for page, url in paging.first %}
         <a class="page" href="{{ url }}">{{ page }}</a>
     {% endfor %}
+{% endif %}
+{% if paging.dotsBefore %}
     ...
 {% endif %}
 {% for page, url in paging.prev %}
@@ -14,8 +16,10 @@
 {% for page, url in paging.next %}
     <a class="page" href="{{ url }}">{{ page }}</a>
 {% endfor %}
-{% if paging.last|length %}
+{% if paging.dotsAfter %}
     ...
+{% endif %}
+{% if paging.last|length %}
     {% for page, url in paging.last %}
         <a class="page" href="{{ url }}">{{ page }}</a>
     {% endfor %}
