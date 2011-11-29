@@ -51,10 +51,17 @@ These parameters can be configured in your config.yml:
   * default value: 10
   * How many search results to display per page
 
-* liip_search.pager_max_extremity_items
+* liip_search.pager_max_head_items
   * default value: 2
-  * How many page links to always show at the beginning and end of the search results
-  * For example, with a value of 2, this always shows page 1, 2, n-1, n, where n is the last page of results.  It should do the right thing, e.g. it will NOT show something like 1,2,1,2 when there are only 2 pages of results.
+  * How many page links to always show at the beginning of the search results
+  * For example, with a value of 2, this always shows page 1 and 2
+  * 0 is an accepted value
+
+* liip_search.pager_max_tail_items
+  * default value: 2
+  * How many page links to always show at the end of the search results
+  * For example, with a value of 2, this always shows page n-1 and n, where n is the last page of results
+  * 0 is an accepted value
 
 * liip_search.pager_max_adjoining_items
   * default value: 2
