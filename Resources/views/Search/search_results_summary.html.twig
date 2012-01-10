@@ -1,4 +1,4 @@
 <p>
-    {% transchoice estimated with {'%query%':searchTerm,'%count%':estimated} from translationDomain %}search_term{% endtranschoice %}
+    {{ 'search_term'|transchoice(estimated, {'%query%':searchTerm,'%count%':estimated}, translationDomain) }}
 </p>
 
