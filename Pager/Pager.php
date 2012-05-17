@@ -11,6 +11,8 @@
 
 namespace Liip\SearchBundle\Pager;
 
+use Symfony\Component\Routing\RouterInterface;
+
 class Pager
 {
     protected $router;
@@ -22,7 +24,7 @@ class Pager
     protected $pageParameterKey;
 
     /**
-     * @param \Symfony\Component\Routing\Router $router
+     * @param \Symfony\Component\Routing\RouterInterface $router
      * @param string $search_route
      * @param integer $max_head_items
      * @param integer $max_tail_items
@@ -31,7 +33,7 @@ class Pager
      * @param string $page_parameter_key
      * @return \Liip\SearchBundle\Pager\Pager
      */
-    public function __construct($router, $search_route, $max_head_items, $max_tail_items, $max_adjoining_items,
+    public function __construct(RouterInterface $router, $search_route, $max_head_items, $max_tail_items, $max_adjoining_items,
         $query_parameter_key, $page_parameter_key)
     {
         $this->router = $router;

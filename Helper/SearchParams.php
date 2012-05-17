@@ -23,7 +23,7 @@ class SearchParams
      * @param string $pageParameterKey
      * @return int
      */
-    static function requestedPage(Request $request, $pageParameterKey)
+    static public function requestedPage(Request $request, $pageParameterKey)
     {
         $page = $request->query->get($pageParameterKey);
         if (null === $page) {
@@ -36,6 +36,7 @@ class SearchParams
         if ($page < 1) {
             $page = 1;
         }
+
         return $page;
     }
 
@@ -46,7 +47,7 @@ class SearchParams
      * @param string $queryParameterKey
      * @return string
      */
-    static function requestedQuery(Request $request, $queryParameterKey)
+    static public function requestedQuery(Request $request, $queryParameterKey)
     {
         $query = $request->query->get($queryParameterKey);
         if (null === $query) {
@@ -55,6 +56,7 @@ class SearchParams
                 return '';
             }
         }
+
         return trim($query);
     }
 }

@@ -11,7 +11,8 @@
 
 namespace Liip\SearchBundle\Google;
 
-class GoogleXMLSearch {
+class GoogleXMLSearch
+{
 
     protected $googleSearchKey;
 

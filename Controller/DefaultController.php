@@ -13,17 +13,17 @@ namespace Liip\SearchBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Response,
     Symfony\Bundle\FrameworkBundle\Templating\EngineInterface,
-    Symfony\Component\Routing\Router;
+    Symfony\Component\Routing\RouterInterface;
 
 class DefaultController
 {
     /**
      * @var \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface
      */
-    protected $templatingEngine;
+    protected $templating;
 
     /**
-     * @var \Symfony\Component\Routing\Router
+     * @var \Symfony\Component\Routing\RouterInterface
      */
     protected $router;
 
@@ -33,17 +33,17 @@ class DefaultController
     protected $searchRoute;
 
     /**
-     * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating_engine
-     * @param \Symfony\Component\Routing\Router $router
+     * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating
+     * @param \Symfony\Component\Routing\RouterInterface $router
      * @param $pager search pager service
      * @param string $translation_domain
      * @param string $query_parameter_key parameter name used for search term
      * @param string $search_route route used for submitting search query
      * @return \Liip\SearchBundle\Controller\DefaultController
      */
-    public function __construct(EngineInterface $templating_engine, Router $router, $pager, $translation_domain, $query_parameter_key, $search_route)
+    public function __construct(EngineInterface $templating, RouterInterface $router, $pager, $translation_domain, $query_parameter_key, $search_route)
     {
-        $this->templatingEngine = $templating_engine;
+        $this->templating = $templating;
         $this->router = $router;
         $this->pager = $pager;
         $this->translationDomain = $translation_domain;
@@ -60,7 +60,7 @@ class DefaultController
      */
     public function showSearchBoxAction($field_id, $query ='')
     {
-        return new Response($this->templatingEngine->render('LiipSearchBundle:Search:search_box.html.twig', array(
+        return new Response($this->templating->render('LiipSearchBundle:Search:search_box.html.twig', array(
                 'searchRoute' =>  $this->router->generate($this->searchRoute),
                 'translationDomain' =>  $this->translationDomain,
                 'field_id'  =>  $field_id,
@@ -80,7 +80,7 @@ class DefaultController
     public function showPagingAction($estimated, $start, $perPage, $query, $translationDomain)
     {
         $paging = $this->pager->paging($estimated, $start, $perPage, $query);
-        return new Response($this->templatingEngine->render('LiipSearchBundle:Search:paging.html.twig',
+        return new Response($this->templating->render('LiipSearchBundle:Search:paging.html.twig',
             array(
                 'paging' => $paging,
                 'estimated' => $estimated,
