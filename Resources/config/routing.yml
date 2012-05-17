@@ -1,4 +1,4 @@
 search:
     pattern: /search
-    defaults: { _controller: liip_google_search:searchAction }
+    defaults: { _controller: liip_search.google:searchAction }
 
