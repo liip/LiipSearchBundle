@@ -10,6 +10,7 @@ Introduction
 ------------
 This search bundle allows you to add search to your site.  It uses the Google Websearch
 XML API as a backend service.
+
 Provided for you are:
 
 * A service which passes submitted queries on to google, and returns HTML results
@@ -26,18 +27,6 @@ These parameters can be configured in your config.yml:
 * search_route
   * default value: 'search'
   * This is the name of the route that will handle submitted search requests
-
-* restrict_to_site
-  * default value: ''
-  * example value: 'www.example.com'
-  * With the default, empty value, all sites configured in the sitesearch account will be searched
-  * You may specify a site here to restrict the search to, if you have configured several sites to search in your sitesearch account
-
-* restrict_to_labels
-  * default value: ''
-  * example value: ['onions', 'potatoes']
-  * With the default, empty value, no label is used to refine the search
-  * You may specify one or more labels to restrict the search to, if you have configured labels in your sitesearch account
 
 * restrict_by_language
   * default value: false
@@ -76,9 +65,24 @@ These parameters can be configured in your config.yml:
   * default value: 'page'
   * The key string used for submitting the page number (e.g. /search?q=software&*p*=3)
 
-* google_search_key
-  * default value: false
-  * The Google search api key
+* google
+  * Enables the google search service
+
+    * search_key
+    * default value: false
+    * The Google search api key (https://code.google.com/apis/console)
+
+    * restrict_to_site
+      * default value: ''
+      * example value: 'www.example.com'
+      * With the default, empty value, all sites configured in the site search account will be searched
+      * You may specify a site here to restrict the search to, if you have configured several sites to search in your site search account
+
+    * restrict_to_labels
+      * default value: ''
+      * example value: ['onions', 'potatoes']
+      * With the default, empty value, no label is used to refine the search
+      * You may specify one or more labels to restrict the search to, if you have configured labels in your site search account
 
 Usage
 -----
@@ -95,7 +99,6 @@ The parameters you must pass are:
 
 
 Create a route for the search action. The easiest is to just use the provided routing.yml from your main project routing.yml
-
 
     liip_search:
         resource: "@LiipSearchBundle/Resources/config/routing.yml"
