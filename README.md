@@ -23,58 +23,62 @@ Configuration
 -------------
 These parameters can be configured in your config.yml:
 
-* liip_search.search_route
+* search_route
   * default value: 'search'
   * This is the name of the route that will handle submitted search requests
 
-* liip_search.restrict_to_site
+* restrict_to_site
   * default value: ''
   * example value: 'www.example.com'
   * With the default, empty value, all sites configured in the sitesearch account will be searched
   * You may specify a site here to restrict the search to, if you have configured several sites to search in your sitesearch account
 
-* liip_search.restrict_to_labels
+* restrict_to_labels
   * default value: ''
   * example value: ['onions', 'potatoes']
   * With the default, empty value, no label is used to refine the search
   * You may specify one or more labels to restrict the search to, if you have configured labels in your sitesearch account
 
-* liip_search.restrict_by_language
+* restrict_by_language
   * default value: false
   * Change this to true if you want to restrict the search to results that Google thinks are in the language specified by the session locale
 
-* liip_search.translation_domain
+* translation_domain
   * default value: 'liip_search_bundle_search'
   * Provides the name of the translation file to use.
 
-* liip_search.results_per_page
+* results_per_page
   * default value: 10
   * How many search results to display per page
 
-* liip_search.pager_max_head_items
+* pager_max_head_items
   * default value: 2
   * How many page links to always show at the beginning of the search results
   * For example, with a value of 2, this always shows page 1 and 2
   * 0 is an accepted value
 
-* liip_search.pager_max_tail_items
+* pager_max_tail_items
   * default value: 2
   * How many page links to always show at the end of the search results
   * For example, with a value of 2, this always shows page n-1 and n, where n is the last page of results
   * 0 is an accepted value
 
-* liip_search.pager_max_adjoining_items
+* pager_max_adjoining_items
   * default value: 2
   * How many page links to always show before and after the current page
   * For example, with a value of 2, on page 6 of the results, it would show <extremity pages> ... 4 5 *6* 7 8 ... <extremity pages>
 
-* liip_search.query_param_name
+* query_param_name
   * default value: 'query'
   * The key string used for submitting the search term (e.g. /search?*q*=software)
 
-* liip_search.page_param_name
+* page_param_name
   * default value: 'page'
   * The key string used for submitting the page number (e.g. /search?q=software&*p*=3)
+
+* google_search_key
+  * default value: false
+  * The Google search api key
 
 Usage
 -----

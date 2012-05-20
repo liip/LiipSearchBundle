@@ -26,8 +26,17 @@ class LiipSearchExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
+        $config = $this->processConfiguration(new Configuration(), $configs);
+
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('config.yml');
         $loader->load('services.yml');
+
+        foreach ($config as $key => $value) {
+            $container->setParameter($this->getAlias().'.'.$key, $value);
+        }
+
+        if ($config['google_search_key']) {
+            $loader->load('google.yml');
+        }
     }
 }
