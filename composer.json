@@ -1,0 +1,27 @@
+{
+    "name": "liip/search-bundle",
+    "description": "This bundles provides some basic infrastructure for creating a search UI in Symfony2 applications along with integration with Google's search API",
+    "keywords": ["symfony2"],
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Liip AG",
+            "homepage": "http://www.liip.ch/"
+        },
+        {
+            "name": "Community contributions",
+            "homepage": "https://github.com/liip/LiipSearchBundle/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "symfony/symfony" : ">=2.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Liip\\SearchBundle": ""
+        }
+    },
+    "target-dir" : "Liip/SearchBundle"
+}
