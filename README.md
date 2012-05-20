@@ -2,7 +2,7 @@ LiipSearchBundle
 ================
 
 This bundle allows using the Google XML API for searching content contained
-in the site(s) that you have configured in a [Google site search](http://www.google.com/site search/) service.
+in the site(s) that you have configured in a [Google site search](http://www.google.com/sitesearch/) service.
 
 Perhaps other search services will be added to this bundle in the future (solr, etc).
 
