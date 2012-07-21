@@ -8,7 +8,7 @@
             </trans-unit>
             <trans-unit id="2">
                 <source>search_noresults</source>
-                <target>Sorry, I found no results for your query on the Liip website.</target>
+                <target>Sorry, I found no results for your query on the website.</target>
             </trans-unit>
             <trans-unit id="3">
                 <source>search_failure</source>
@@ -28,7 +28,7 @@
             </trans-unit>
             <trans-unit id="7">
                 <source>Search this site</source>
-                <target>Search liip.ch</target>
+                <target>Search</target>
             </trans-unit>
             <trans-unit id="8">
                 <source>send</source>
