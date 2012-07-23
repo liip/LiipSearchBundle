@@ -1,3 +1,7 @@
+{% extends "LiipSearchBundle::layout.html.twig" %}
+
+{% block content %}
+
 {% include 'LiipSearchBundle:Search:search_results_title.html.twig' with {'translationDomain':translationDomain} %}
 {% render 'liip_search_default_controller:showSearchBoxAction' with {'field_id':'query2', 'query':searchTerm} %}
 
@@ -11,6 +15,8 @@
                 </div>
             {% endif %}
         </div>
-{% else %}
+{% elseif(searchTerm) %}
     <p>{% trans from translationDomain %}search_noresults{% endtrans %}</p>
 {% endif %}
+
+{% endblock %}
