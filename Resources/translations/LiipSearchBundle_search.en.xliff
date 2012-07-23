@@ -28,7 +28,7 @@
             </trans-unit>
             <trans-unit id="7">
                 <source>Search this site</source>
-                <target>Search</target>
+                <target>Search this site</target>
             </trans-unit>
             <trans-unit id="8">
                 <source>send</source>
