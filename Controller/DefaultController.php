@@ -14,6 +14,7 @@ namespace Liip\SearchBundle\Controller;
 use Symfony\Component\HttpFoundation\Response,
     Symfony\Bundle\FrameworkBundle\Templating\EngineInterface,
     Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController
 {
@@ -54,18 +55,17 @@ class DefaultController
     /**
      * Renders the search box
      *
-     * @param string $field_id
-     * @param string $query
+     * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function showSearchBoxAction($field_id, $query ='')
+    public function showSearchBoxAction(Request $request)
     {
         return new Response($this->templating->render('LiipSearchBundle:Search:search_box.html.twig', array(
                 'searchRoute' =>  $this->router->generate($this->searchRoute),
                 'translationDomain' =>  $this->translationDomain,
-                'field_id'  =>  $field_id,
+                'field_id'  =>  $request->query->get('field_id'),
                 'query_param_name' => $this->queryParameterKey,
-                'searchTerm'    =>  $query,
+                'searchTerm'    =>  $request->query->get('query'),
             )));
     }
 

@@ -3,7 +3,7 @@
 {% block content %}
 
 {% include 'LiipSearchBundle:Search:search_results_title.html.twig' with {'translationDomain':translationDomain} %}
-{% render 'liip_search_default_controller:showSearchBoxAction' with {'field_id':'query2', 'query':searchTerm} %}
+{% render url('liip_searchbox', {'field_id': 'query2', 'query': searchTerm}) %}
 
 {% if estimated %}
     {% include 'LiipSearchBundle:Search:search_results_summary.html.twig' with {'count':estimated, 'query':searchTerm, 'translationDomain': translationDomain} %}

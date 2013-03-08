@@ -44,7 +44,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('restrict_to_labels')->defaultValue('')->end()
                     ->end()
                 ->end()
-                ->scalarNode('search_route')->defaultValue('search')->end()
+                ->scalarNode('search_route')->defaultValue('liip_search')->end()
                 ->scalarNode('pager_max_head_items')->defaultValue(2)->end()
                 ->scalarNode('pager_max_tail_items')->defaultValue(2)->end()
                 ->scalarNode('pager_max_adjoining_items')->defaultValue(2)->end()
