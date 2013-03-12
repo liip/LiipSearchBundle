@@ -4,4 +4,4 @@ liip_search:
 
 liip_searchbox:
     pattern: /searchbox
-    defaults: {_controller: liip_search_default_controller:showSearchBoxAction
+    defaults: {_controller: liip_search_default_controller:showSearchBoxAction}
