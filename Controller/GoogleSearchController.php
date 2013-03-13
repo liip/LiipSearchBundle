@@ -111,6 +111,8 @@ class GoogleSearchController implements SearchInterface
     /**
      * Determine language used to restrict search results, if one should be used at all.
      * If $this->restrictByLanguage is false, this will return false.
+     * @param null $lang
+     * @param \Symfony\Component\HttpFoundation\Request $request
      * @return mixed string(=locale) or bool(=false)
      */
     public function queryLanguage($lang = null, Request $request)
@@ -121,6 +123,6 @@ class GoogleSearchController implements SearchInterface
         if (null !== $lang) {
             return $lang;
         }
-        return $request->getSession()->getLocale();
+        return $request->getLocale();
     }
 }
