@@ -25,7 +25,7 @@ Configuration
 These parameters can be configured in your config.yml:
 
 * search_route
-  * default value: 'search'
+  * default value: 'liip_search'
   * This is the name of the route that will handle submitted search requests
 
 * restrict_by_language
@@ -105,12 +105,12 @@ Create a route for the search action. The easiest is to just use the provided ro
 
 
 It defaults to the route /search . If you want a different route, you can either
-use the liip_google_search:search action as the controller for that route or define
+use the liip_search.google:search action as the controller for that route or define
 your own controller action, do whatever you need to do and then use the services
 provided by this bundle.
 
 If you define you own action, you'll need to provide the query and page parameters when
-rendering the liip_google_search search action from the twig template.
+rendering the liip_search.google search action from the twig template.
 Your custom search action method might look like this:
 
     use Liip\SearchBundle\Helper\SearchParams;
@@ -125,22 +125,22 @@ Your custom search action method might look like this:
                 ));
     }
 
-Where MyBundle:Search:search.html.twig renders the liip_google_search search action:
+Where MyBundle:Search:search.html.twig renders the liip_search.google search action:
 
-    {% render "liip_google_search:searchAction" with {'query': query, 'page': page} %}
+    {% render "liip_search.google:searchAction" with {'query': query, 'page': page} %}
 
 When rendering from a template like this, the query and page parameters must be provided.
-When rendered from a template, a subrequest is used, and liip_google_search:searchAction
+When rendered from a template, a subrequest is used, and liip_search.google:searchAction
 will not have access to the original Request object, and so cannot read the query and
 page parameters from the Request.
 
 
-If, on the other hand, you choose to use the liip_google_search:search action, your route
+If, on the other hand, you choose to use the liip_search.google:search action, your route
 will look something like this:
 
     search:
         pattern: /search
-        defaults: { _controller: liip_google_search:search }
+        defaults: { _controller: liip_search.google:search }
 
 If you're doing this, you'll want to override the templates so that you can include your
 site-specific layout.
