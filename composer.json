@@ -23,5 +23,10 @@
             "Liip\\SearchBundle": ""
         }
     },
-    "target-dir" : "Liip/SearchBundle"
+    "target-dir" : "Liip/SearchBundle",
+        "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
 }
