@@ -90,6 +90,10 @@ Include the bundle in your app/autoload.php and app/Kernel.php.
 
 You can include the default search box by rendering the showSearchBox action of the default search controller:
 
+    {{ render(controller('liip_search_default_controller:showSearchBoxAction', {'field_id':'query', 'query':'last_query'}) }}
+
+Or if you are on an old Symfony version that does not support this construct, you do:
+
     {% render 'liip_search_default_controller:showSearchBoxAction' with {'field_id':'query', 'query':'last_query'} %}
 
 The parameters you must pass are:
@@ -127,7 +131,7 @@ Your custom search action method might look like this:
 
 Where MyBundle:Search:search.html.twig renders the liip_search.google search action:
 
-    {% render "liip_search.google:searchAction" with {'query': query, 'page': page} %}
+    {{ controller(render("liip_search.google:searchAction", {'query': query, 'page': page})) }}
 
 When rendering from a template like this, the query and page parameters must be provided.
 When rendered from a template, a subrequest is used, and liip_search.google:searchAction
@@ -153,7 +157,7 @@ templates.
 
 Your version of the templates must go into app/Resources.
 
-See http://symfony.com/doc/2.0/book/templating.html#overriding-bundle-templates
+See http://symfony.com/doc/master/book/templating.html#overriding-bundle-templates
 
 Overriding the translations
 ---------------------------
