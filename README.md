@@ -131,7 +131,7 @@ Your custom search action method might look like this:
 
 Where MyBundle:Search:search.html.twig renders the liip_search.google search action:
 
-    {{ controller(render("liip_search.google:searchAction", {'query': query, 'page': page})) }}
+    {{ render(controller("liip_search.google:searchAction", {'query': query, 'page': page})) }}
 
 When rendering from a template like this, the query and page parameters must be provided.
 When rendered from a template, a subrequest is used, and liip_search.google:searchAction
