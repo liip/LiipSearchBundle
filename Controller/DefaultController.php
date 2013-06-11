@@ -11,10 +11,12 @@
 
 namespace Liip\SearchBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Response,
-    Symfony\Bundle\FrameworkBundle\Templating\EngineInterface,
-    Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\Routing\RouterInterface;
+
+use Liip\SearchBundle\Pager\Pager;
 
 class DefaultController
 {
@@ -28,6 +30,9 @@ class DefaultController
      */
     protected $router;
 
+    /**
+     * @var Pager
+     */
     protected $pager;
     protected $translationDomain;
     protected $queryParameterKey;
@@ -36,7 +41,7 @@ class DefaultController
     /**
      * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating
      * @param \Symfony\Component\Routing\RouterInterface $router
-     * @param $pager search pager service
+     * @param Pager $pager search pager service
      * @param string $translation_domain
      * @param string $query_parameter_key parameter name used for search term
      * @param string $search_route route used for submitting search query
@@ -75,16 +80,22 @@ class DefaultController
      * @param integer $perPage
      * @param string $query
      * @param string $translationDomain
-     * @return void
+     *
+     * @return Response
      */
-    public function showPagingAction($estimated, $start, $perPage, $query, $translationDomain)
+    public function showPagingAction(Request $request)
     {
-        $paging = $this->pager->paging($estimated, $start, $perPage, $query);
+        $paging = $this->pager->paging(
+            $request->query->get('estimated'),
+            $request->query->get('start'),
+            $request->query->get('perPage'),
+            $request->query->get('query')
+        );
         return new Response($this->templating->render('LiipSearchBundle:Search:paging.html.twig',
             array(
                 'paging' => $paging,
-                'estimated' => $estimated,
-                'translationDomain' => $translationDomain,
+                'estimated' => $request->query->get('estimated'),
+                'translationDomain' => $request->query->get('translationDomain'),
             )));
     }
 }
