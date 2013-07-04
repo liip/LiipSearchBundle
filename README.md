@@ -90,7 +90,7 @@ Include the bundle in your app/autoload.php and app/Kernel.php.
 
 You can include the default search box by rendering the showSearchBox action of the default search controller:
 
-    {{ render(controller('liip_search_default_controller:showSearchBoxAction', {'field_id':'query', 'query':'last_query'}) }}
+    {{ render(controller('liip_search_default_controller:showSearchBoxAction', {'field_id':'query', 'query':'last_query'})) }}
 
 Or if you are on an old Symfony version that does not support this construct, you do:
 
