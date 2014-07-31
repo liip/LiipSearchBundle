@@ -69,8 +69,16 @@ These parameters can be configured in your config.yml:
   * Enables the google search service
 
     * search_key
-    * default value: false
-    * The Google search api key (https://code.google.com/apis/console)
+      * default value: false
+      * The Google Search Engine key (https://www.google.com/cse/all)
+
+    * search_api_url
+      * default value: https://www.googleapis.com/customsearch/v1
+      * The Google Search API URL for REST invocation
+   
+    * api_key
+      * default value: false
+      * The Google Project API key (https://code.google.com/apis/console)
 
     * restrict_to_site
       * default value: ''
