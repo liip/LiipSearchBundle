@@ -40,6 +40,7 @@ class Configuration implements ConfigurationInterface
                     ->canBeUnset()
                     ->children()
                         ->scalarNode('search_key')->defaultFalse()->end()
+                        ->scalarNode('api_key')->defaultFalse()->end()
                         ->scalarNode('restrict_to_site')->defaultValue('')->end()
                         ->scalarNode('restrict_to_labels')->defaultValue('')->end()
                     ->end()

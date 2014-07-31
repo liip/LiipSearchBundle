@@ -14,6 +14,8 @@ namespace Liip\SearchBundle\Google;
 class GoogleXMLSearch
 {
 
+    protected $googleApiKey;
+
     protected $googleSearchKey;
 
     protected $restrictToSite;
@@ -21,13 +23,15 @@ class GoogleXMLSearch
     protected $restrictToLabels;
 
     /**
-     * @param string $googleSearchKey key for cse search service
+     * @param string $google_api_key Key for Google Project
+     * @param string $google_search_key Key for cse search service
      * @param string $restrict_to_site If search results should be restricted to one site, specify the site
-     * @param array  $restrict_to_labels If search results should be restricted to one or more labels, specify the labels
+     * @param array $restrict_to_labels If search results should be restricted to one or more labels, specify the labels
      * @return \Liip\SearchBundle\Google\GoogleXMLSearch
      */
-    public function __construct($google_search_key, $restrict_to_site, $restrict_to_labels)
+    public function __construct($google_api_key, $google_search_key, $restrict_to_site, $restrict_to_labels)
     {
+        $this->googleApiKey = $google_api_key;
         $this->googleSearchKey = $google_search_key;
         $this->restrictToSite = $restrict_to_site;
         $this->restrictToLabels = $restrict_to_labels;
