@@ -11,6 +11,9 @@
 
 namespace Liip\SearchBundle\Google;
 
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Serializer;
+
 class GoogleXMLSearch
 {
 
@@ -77,43 +80,55 @@ class GoogleXMLSearch
      *
      * @param string $query the search query (not url encoded)
      * @param mixed $lang boolean false or language string (en, fr, de, etc.)
-     * @param int $start item number to start with (first item is item 0)
+     * @param int $start item number to start with (first item is item 1)
      * @param int $limit how many results at most to return
-     * @result array of search result information and items
+     * @throws \Exception
+     * @return array of search result information and items
      */
     public function getSearchResults($query, $lang, $start, $limit)
     {
-        $url = $this->getRequestUrl($this->googleSearchKey, $query, $lang, $start, $limit);
-        $doc = new \DOMDocument('1.0', 'UTF-8');
-        if (!$doc->load($url)) {
-            // todo: log an error message or throw an exception
-            return array();
+        $url = $this->getRequestUrl($this->googleApiKey, $this->googleSearchKey, $query, $lang, $start, $limit);
+        $json = file_get_contents($url);
+
+        if ($json === false || is_null($json)) {
+            throw new \Exception('Error downloading Google Search Result');
         }
+
+        $serializer = new Serializer(array(), array(new JsonEncoder()));
+        $doc = $serializer->decode($json, 'json');
+
+
+        if ($doc === null) {
+            throw new \Exception('Error while decoding JSON data from Google Search Result');
+        }
+
         return $this->extractSearchResults($doc);
     }
 
     /**
      * Builds request URL for google search XML API
      *
+     * @param string $googleApiKey key for the Google project
      * @param string $googleSearchKey key for cse search service
      * @param string $query the search query (not encoded)
      * @param mixed $lang boolean false or language string (en, fr, de, etc.)
-     * @param int $start item number to start with (first item is item 0)
-     * @param int $limit how many results at most to return
-     * @result array of search result information and items
+     * @param int $start item number to start with (first item is item 1)
+     * @param int $limit how many results at most to return (valid values: 1 to 10)
+     * @return array of search result information and items
      */
-    protected function getRequestUrl($googleSearchKey, $query, $lang, $start, $limit)
+    protected function getRequestUrl($googleApiKey, $googleSearchKey, $query, $lang, $start, $limit)
     {
         $encodedQuery = $this->getGoogleEncodedString($query);
 
         $params = array(
-            'client' => 'google-csbe',
+            //'client' => 'google-csbe',
+            'key' => $googleApiKey,
             'cx' => $googleSearchKey,
-            'output' => 'xml_no_dtd',
-            'ie' => 'UTF-8',            // input encoding
-            'oe' => 'UTF-8',            // output encoding
-            'start' => $start,          // how many items to skip before collecting items
-            'num' => $limit,            // how many items (maximum) to return
+            //'output' => 'xml_no_dtd',
+            //'ie' => 'UTF-8',            // input encoding
+            //'oe' => 'UTF-8',            // output encoding
+            'start' => $start,            // 1-based index of first item to return
+            'num' => $limit,              // how many items (maximum) to return (from 1 to 10)
         );
 
         if ($lang !== false) {
@@ -129,9 +144,10 @@ class GoogleXMLSearch
             }
         }
 
-        $queryString = '?' . http_build_query($params) . '&q=' . $encodedQuery;
+        // The parameters don't have to be escaped (eg. ":" should remain as is)
+        $queryString = '?' . urldecode(http_build_query($params)) . '&q=' . $encodedQuery;
 
-        $url = 'http://www.google.com/cse' . $queryString;
+        $url = 'https://www.googleapis.com/customsearch/v1' . $queryString;
         return $url;
     }
 
@@ -156,38 +172,47 @@ class GoogleXMLSearch
 
     /**
      * Extract the search results from the Google search response
-     * @param DOMDocument $doc
+     * @param array $data
      * @return array
      */
-    protected function extractSearchResults($doc)
+    protected function extractSearchResults($data)
     {
         $results = array(
             'items' => array(),
             'information' => array(),
         );
 
-        $xpath = new \DOMXPath($doc);
+        /*
+        echo '<pre>';
+        var_dump($data);
+        echo '</pre>';
+        //die();
+        //*/
 
-        // get any spelling suggestions
-        $spellingSuggestions = $this->spellingSuggestions($xpath);
-        if (count($spellingSuggestions)) {
-            $results['information']['spellingSuggestions'] = $spellingSuggestions;
-        }
-
-        // Get count of estimated total available hits, return now if there are none (which means no items were found)
-        if (!$pagingInformation = $this->pagingInformation($xpath)) {
+        // If the document is not an object, something went wrong here
+        if (!is_array($data) || empty($data)) {
             return $results;
         }
-        $results['information']['paging'] = $pagingInformation;
 
-        $results['items'] = $this->searchResultItems($xpath);
+
+        // Get count of estimated total available hits
+        $results['information'] = $this->extractSearchInformation($data);
+        $baseIndex = $results['information']['paging']['currentRequestItemRange']['start'];
+
+
+        if ($data['items'] && count($data['items'])) {
+            // Build the result set from the google response
+            foreach($data['items'] as $index => $resultItem) {
+                $results['items'][] = $this->extractSearchResultItem($resultItem, $index + $baseIndex);
+            }
+        }
 
         return $results;
     }
 
     /**
      * Get spelling suggestions from Google search response
-     * @param DomXPath $xpath
+     * @param \DOMXPath $xpath
      * @return array
      */
     protected function spellingSuggestions($xpath)
@@ -207,104 +232,10 @@ class GoogleXMLSearch
     }
 
     /**
-     * Gets paging information
-     *
-     * @param DomXPath $xpath
-     * @return mixed null if no information available or array
-     */
-    protected function pagingInformation($xpath)
-    {
-        $pagingInformation = array();
-
-        $estimatedHitsNode = $xpath->query('/GSP/RES/M');
-        if (!$estimatedHitsNode || $estimatedHitsNode->length === 0) {
-            return null;
-        }
-        $pagingInformation['estimatedTotalItemCount'] = (int)$estimatedHitsNode->item(0)->textContent;
-
-        $resultsNodeSet = $xpath->query('/GSP/RES');
-        if (!$resultsNodeSet || $resultsNodeSet->length === 0) {
-            return $pagingInformation;
-        }
-
-        $resultsElement = $resultsNodeSet->item(0);
-        if ($resultsElement->hasAttribute('SN') && $resultsElement->hasAttribute('EN')) {
-            $startNumber = (int)$resultsElement->getAttribute('SN');
-            $endNumber =   (int)$resultsElement->getAttribute('EN');
-            $pagingInformation['currentRequestItemRange'] = array (
-                'start' => $startNumber,
-                'end' => $endNumber,
-            );
-        } else {
-            return null;
-        }
-
-        // fix estimatedTotalItemCount if query start does not reflect startNumber
-        // which means the estimatedTotalItemCount is wrong
-        $queryStartNode = $xpath->query('/GSP/PARAM[@name="start"]');
-        if($queryStartNode->length > 0 && $queryStartNode->item(0)->hasAttribute('value')) {
-            $queryStartNumber = (int)$queryStartNode->item(0)->getAttribute('value');
-            if($startNumber < $queryStartNumber) {
-                $pagingInformation['estimatedTotalItemCount'] = $endNumber;
-            }
-        }
-        return $pagingInformation;
-    }
-
-    /**
-     * Extract the search results from the Google search response
-     * @param DomXPath $xpath
-     * @return array
-     */
-    protected function searchResultItems($xpath)
-    {
-        $items = array();
-        $resultElements = $xpath->query('/GSP/RES/R');
-        if (!$resultElements || $resultElements->length === 0) {
-            return $items;
-        }
-
-        foreach ($resultElements as $resultElement) {
-
-            $item = array();
-            $index = $resultElement->getAttribute('N');
-
-            if ($resultElement->hasAttribute('MIME')) {
-                $item['mimetype'] = $resultElement->getAttribute('MIME');
-            }
-
-            if ($title = $xpath->query('T', $resultElement)) {
-                $item['title'] = $title->item(0)->textContent;
-            }
-
-            if ($summary = $xpath->query('S', $resultElement)) {
-                $item['summary'] = $summary->item(0)->textContent;
-            }
-
-            if ($url = $xpath->query('U', $resultElement)) {
-                $item['url'] = $url->item(0)->textContent;
-            }
-
-            if ($hasMoreLikeThis = $xpath->query('HAS/RT', $resultElement)) {
-                $item['moreLikeThis'] = true;
-            } else {
-                $item['moreLikeThis'] = false;
-            }
-
-            $item['site'] = $this->extractSite($item['url']);
-
-            $item['index'] = $index;
-
-            $items[] = $item;
-        }
-        return $items;
-    }
-
-    /**
      * Guess site based on url.
      * This could perhaps also be done by setting up some "refinements" in the cse and checking for those in the results.
      *
-     * @param string absolute url of item
+     * @param string $url Absolute url of item
      * @return string hostname
      */
     protected function extractSite($url)
@@ -314,5 +245,55 @@ class GoogleXMLSearch
             return null;
         }
         return $parts[2];
+    }
+
+
+    /**
+     * Extract the search results from the Google search response
+     * @param $resultItemData
+     * @param $index
+     * @return array
+     */
+    protected function extractSearchResultItem($resultItemData, $index)
+    {
+        $result = array(
+            'title' => $resultItemData['htmlTitle'],
+            'plainTitle' => $resultItemData['title'],
+            'summary' => $resultItemData['htmlSnippet'],
+            'plainSummary' => $resultItemData['snippet'],
+            'url' => $resultItemData['formattedUrl'],
+            // @todo Implement the "MoreLikeThis" identification and extraction
+            'moreLikeThis' => false,
+            'site' => $this->extractSite('http://' . $resultItemData['formattedUrl']),
+            'index' => $index,
+            'thumbnail' => false,
+        );
+
+        // Adding extra content: page preview (if available)
+        if (isset($resultItemData['pagemap']['cse_thumbnail']) && !empty($resultItemData['pagemap']['cse_thumbnail'])) {
+            $thumbnail = current($resultItemData['pagemap']['cse_thumbnail']);
+            $result['thumbnail'] = $thumbnail;
+        }
+        return $result;
+    }
+
+    /**
+     * Gets paging information
+     * @param $data
+     * @return array
+     */
+    protected function extractSearchInformation($data)
+    {
+        $request = current($data['queries']['request']);
+        return array(
+            'searchTime' => $data['searchInformation']['searchTime'],
+            'paging' => array(
+                'estimatedTotalItemCount' => $data['searchInformation']['totalResults'],
+                'currentRequestItemRange' => array(
+                    'start' => $request['startIndex'],
+                    'end' => $request['startIndex'] + $request['count'] -1,
+                )
+            )
+        );
     }
 }
