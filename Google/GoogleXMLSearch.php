@@ -200,7 +200,7 @@ class GoogleXMLSearch
         $baseIndex = $results['information']['paging']['currentRequestItemRange']['start'];
 
 
-        if ($data['items'] && count($data['items'])) {
+        if (isset($data['items']) && count($data['items'])) {
             // Build the result set from the google response
             foreach($data['items'] as $index => $resultItem) {
                 $results['items'][] = $this->extractSearchResultItem($resultItem, $index + $baseIndex);
