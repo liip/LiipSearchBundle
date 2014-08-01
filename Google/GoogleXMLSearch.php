@@ -88,10 +88,15 @@ class GoogleXMLSearch
     public function getSearchResults($query, $lang, $start, $limit)
     {
         $url = $this->getRequestUrl($this->googleApiKey, $this->googleSearchKey, $query, $lang, $start, $limit);
-        $json = file_get_contents($url);
+        try {
+            $json = @file_get_contents($url);
+        }
+        catch (\Exception $e) {
+            throw new \Exception('Error while getting the Google Search Engine API data', 0, $e);
+        }
 
         if ($json === false || is_null($json)) {
-            throw new \Exception('Error downloading Google Search Result');
+            throw new \Exception('Error while decoding the Google Search Engine API data');
         }
 
         $serializer = new Serializer(array(), array(new JsonEncoder()));
