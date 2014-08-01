@@ -92,6 +92,7 @@ class GoogleXMLSearch
             $json = @file_get_contents($url);
         }
         catch (\Exception $e) {
+            // @todo: provide a more clear error message, extract it from Google HTTP error message?
             throw new \Exception('Error while getting the Google Search Engine API data', 0, $e);
         }
 
@@ -279,6 +280,7 @@ class GoogleXMLSearch
             $thumbnail = current($resultItemData['pagemap']['cse_thumbnail']);
             $result['thumbnail'] = $thumbnail;
         }
+
         return $result;
     }
 
