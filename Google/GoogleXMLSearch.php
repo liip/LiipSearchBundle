@@ -261,10 +261,10 @@ class GoogleXMLSearch
             'plainTitle' => $resultItemData['title'],
             'summary' => $resultItemData['htmlSnippet'],
             'plainSummary' => $resultItemData['snippet'],
-            'url' => $resultItemData['formattedUrl'],
+            'url' => $resultItemData['link'],
             // @todo Implement the "MoreLikeThis" identification and extraction
             'moreLikeThis' => false,
-            'site' => $this->extractSite('http://' . $resultItemData['formattedUrl']),
+            'site' => $this->extractSite($resultItemData['link']),
             'index' => $index,
             'thumbnail' => false,
         );
