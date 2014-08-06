@@ -90,24 +90,30 @@ class GoogleXMLSearch
      */
     public function getSearchResults($query, $lang, $start, $limit)
     {
-        $url = $this->getRequestUrl($this->googleApiKey, $this->googleSearchKey, $query, $lang, $start, $limit);
-        try {
-            $json = @file_get_contents($url);
-        }
-        catch (\Exception $e) {
-            // @todo: provide a more clear error message, extract it from Google HTTP error message?
-            throw new \Exception('Error while getting the Google Search Engine API data', 0, $e);
-        }
+        $doc = null;
 
-        if ($json === false || is_null($json)) {
-            throw new \Exception('Error while decoding the Google Search Engine API data');
-        }
+        // Avoid executing empty queries.
+        if (!empty($query)) {
 
-        // Decoding JSON data as associative array
-        $doc = json_decode($json, true);
+            $url = $this->getRequestUrl($this->googleApiKey, $this->googleSearchKey, $query, $lang, $start, $limit);
+            try {
+                $json = @file_get_contents($url);
+            }
+            catch (\Exception $e) {
+                // @todo: provide a more clear error message, extract it from Google HTTP error message?
+                throw new \Exception('Error while getting the Google Search Engine API data', 0, $e);
+            }
 
-        if ($doc === null) {
-            throw new \Exception('Error while decoding JSON data from Google Search Result');
+            if ($json === false || is_null($json)) {
+                throw new \Exception('Error while decoding the Google Search Engine API data');
+            }
+
+            // Decoding JSON data as associative Array
+            $doc = json_decode($json, true);
+
+            if ($doc === null) {
+                throw new \Exception('Error while decoding JSON data from Google Search Result');
+            }
         }
 
         return $this->extractSearchResults($doc);
