@@ -16,5 +16,6 @@ services:
         arguments:
             google_api_key: "%liip_search.google.api_key%"
             google_search_key: "%liip_search.google.search_key%"
+            google_search_api_url: "%liip_search.google.search_api_url%"
             restrict_to_site:  "%liip_search.google.restrict_to_site%"
             restrict_to_labels: "%liip_search.google.restrict_to_labels%"

@@ -19,6 +19,8 @@ class GoogleXMLSearch
 
     protected $googleApiKey;
 
+    protected $googleSearchAPIUrl;
+
     protected $googleSearchKey;
 
     protected $restrictToSite;
@@ -32,10 +34,11 @@ class GoogleXMLSearch
      * @param array $restrict_to_labels If search results should be restricted to one or more labels, specify the labels
      * @return \Liip\SearchBundle\Google\GoogleXMLSearch
      */
-    public function __construct($google_api_key, $google_search_key, $restrict_to_site, $restrict_to_labels)
+    public function __construct($google_api_key, $google_search_key, $google_search_api_url, $restrict_to_site, $restrict_to_labels)
     {
         $this->googleApiKey = $google_api_key;
         $this->googleSearchKey = $google_search_key;
+        $this->googleSearchAPIUrl = $google_search_api_url;
         $this->restrictToSite = $restrict_to_site;
         $this->restrictToLabels = $restrict_to_labels;
     }
@@ -153,7 +156,7 @@ class GoogleXMLSearch
         // The parameters don't have to be escaped (eg. ":" should remain as is)
         $queryString = '?' . urldecode(http_build_query($params)) . '&q=' . $encodedQuery;
 
-        $url = 'https://www.googleapis.com/customsearch/v1' . $queryString;
+        $url = $this->googleSearchAPIUrl . $queryString;
         return $url;
     }
 

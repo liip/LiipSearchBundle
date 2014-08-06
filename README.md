@@ -71,6 +71,10 @@ These parameters can be configured in your config.yml:
     * search_key
       * default value: false
       * The Google Search Engine key (https://www.google.com/cse/all)
+
+    * search_api_url
+      * default value: https://www.googleapis.com/customsearch/v1
+      * The Google Search API URL for REST invocation
    
     * api_key
       * default value: false
