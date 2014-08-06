@@ -217,23 +217,6 @@ class GoogleXMLSearch
     }
 
     /**
-     * Guess site based on url.
-     * This could perhaps also be done by setting up some "refinements" in the cse and checking for those in the results.
-     *
-     * @param string $url Absolute url of item
-     * @return string hostname
-     */
-    protected function extractSite($url)
-    {
-        $parts = explode('/', $url, 4);
-        if (count($parts) < 3) {
-            return null;
-        }
-        return $parts[2];
-    }
-
-
-    /**
      * Extract the search results from the Google search response
      * @param $resultItemData
      * @param $index
@@ -249,7 +232,7 @@ class GoogleXMLSearch
             'url' => $resultItemData['link'],
             // @todo Implement the "MoreLikeThis" identification and extraction
             'moreLikeThis' => false,
-            'site' => $this->extractSite($resultItemData['link']),
+            'site' => parse_url($resultItemData['link'], PHP_URL_HOST),
             'index' => $index,
             'thumbnail' => false,
         );
