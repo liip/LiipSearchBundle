@@ -103,9 +103,8 @@ class GoogleXMLSearch
             throw new \Exception('Error while decoding the Google Search Engine API data');
         }
 
-        $serializer = new Serializer(array(), array(new JsonEncoder()));
-        $doc = $serializer->decode($json, 'json');
-
+        // Decoding JSON data as associative array
+        $doc = json_decode($json, true);
 
         if ($doc === null) {
             throw new \Exception('Error while decoding JSON data from Google Search Result');
