@@ -11,9 +11,6 @@
 
 namespace Liip\SearchBundle\Google;
 
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Serializer;
-
 class GoogleXMLSearch
 {
 
