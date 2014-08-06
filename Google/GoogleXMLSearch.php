@@ -124,34 +124,37 @@ class GoogleXMLSearch
      * @param int $start item number to start with (first item is item 1)
      * @param int $limit how many results at most to return (valid values: 1 to 10)
      * @return array of search result information and items
+     * @see https://developers.google.com/custom-search/json-api/v1/using_rest
      */
     protected function getRequestUrl($googleApiKey, $googleSearchKey, $query, $lang, $start, $limit)
     {
         $encodedQuery = $this->getGoogleEncodedString($query);
 
         $params = array(
-            //'client' => 'google-csbe',
-            'key' => $googleApiKey,
-            'cx' => $googleSearchKey,
-            //'output' => 'xml_no_dtd',
-            //'ie' => 'UTF-8',            // input encoding
-            //'oe' => 'UTF-8',            // output encoding
-            'start' => $start,            // 1-based index of first item to return
-            'num' => $limit,              // how many items (maximum) to return (from 1 to 10)
+            'key' => $googleApiKey,      // API key (REQUIRED)
+            'cx' => $googleSearchKey,    // Custom search engine ID (REQUIRED)
+            // 'alt' => 'json',          // Data format for the response. Values: json|atom Default: json
+            // 'fields' => null,         // Selector specifying a subset of fields to include in the response.
+            'prettyPrint' => true,      // Returns response with indentations and line breaks. Default: true
+            'start' => $start,            // The index of the first result to return (1-based index).
+            'num' => $limit,              // Number of search results to return. Valid values: 1 to 10.
         );
 
         if ($lang !== false) {
-            $params['lr'] = 'lang_' . $lang;    // results language
-            $params['hl'] =  $lang;             // interface language, google recommends explicitly setting also for xml queries
+            $params['lr'] = 'lang_' . $lang;    // Restricts the search to documents written in a particular language
+            $params['hl'] =  $lang;             // Sets the user interface language. Google recommends explicitly
+                                                //   setting also for xml queries
         }
 
         if ($this->restrictToSite) {
-            $params['as_sitesearch'] = $this->restrictToSite;
-        } elseif (!empty($this->restrictToLabels)) {
-            foreach ($this->restrictToLabels as $label) {
-                $encodedQuery .= '+more&3' . $label;
-            }
+            // Specifies all search results should be pages from a given site.
+            $params['siteSearch'] = $this->restrictToSite;
         }
+        //elseif (!empty($this->restrictToLabels)) {
+        //    foreach ($this->restrictToLabels as $label) {
+        //        $encodedQuery .= '+more&3' . $label;
+        //    }
+        //}
 
         // The parameters don't have to be escaped (eg. ":" should remain as is)
         $queryString = '?' . urldecode(http_build_query($params)) . '&q=' . $encodedQuery;
@@ -191,53 +194,24 @@ class GoogleXMLSearch
             'information' => array(),
         );
 
-        /*
-        echo '<pre>';
-        var_dump($data);
-        echo '</pre>';
-        //die();
-        //*/
-
-        // If the document is not an object, something went wrong here
+        // If the document is not an array, ot it is empty something went wrong here or the query was empty.
         if (!is_array($data) || empty($data)) {
             return $results;
         }
 
-
-        // Get count of estimated total available hits
+        // Get count of estimated total available hits.
         $results['information'] = $this->extractSearchInformation($data);
         $baseIndex = $results['information']['paging']['currentRequestItemRange']['start'];
 
 
         if (isset($data['items']) && count($data['items'])) {
-            // Build the result set from the google response
+            // Build the result set from the google response.
             foreach($data['items'] as $index => $resultItem) {
                 $results['items'][] = $this->extractSearchResultItem($resultItem, $index + $baseIndex);
             }
         }
 
         return $results;
-    }
-
-    /**
-     * Get spelling suggestions from Google search response
-     * @param \DOMXPath $xpath
-     * @return array
-     */
-    protected function spellingSuggestions($xpath)
-    {
-        $spellingSuggestions = array();
-        $suggestions = $xpath->query('/GSP/Spelling/Suggestion');
-        if ($suggestions) {
-            foreach ($suggestions as $suggestion) {
-                if ($suggestion->hasAttributes()) {
-                    if ($spellingSuggestion = $suggestion->attributes->getNamedItem('q')->value) {
-                        $spellingSuggestions[] = $spellingSuggestion;
-                    }
-                }
-            }
-        }
-        return $spellingSuggestions;
     }
 
     /**
