@@ -11,6 +11,8 @@
 
 namespace Liip\SearchBundle\Google;
 
+use Liip\SearchBundle\Exception\GoogleSearchException;
+
 class GoogleXMLSearch
 {
 
@@ -27,6 +29,7 @@ class GoogleXMLSearch
     /**
      * @param string $google_api_key Key for Google Project
      * @param string $google_search_key Key for cse search service
+     * @param $google_search_api_url
      * @param string $restrict_to_site If search results should be restricted to one site, specify the site
      * @param array $restrict_to_labels If search results should be restricted to one or more labels, specify the labels
      * @return \Liip\SearchBundle\Google\GoogleXMLSearch
@@ -87,30 +90,30 @@ class GoogleXMLSearch
      */
     public function getSearchResults($query, $lang, $start, $limit)
     {
-        $doc = null;
+        if (empty($query)) {
+            return array(
+                'items' => array(),
+                'information' => array(),
+            );
+        }
 
-        // Avoid executing empty queries.
-        if (!empty($query)) {
+        $url = $this->getRequestUrl($this->googleApiKey, $this->googleSearchKey, $query, $lang, $start, $limit);
+        try {
+            $json = @file_get_contents($url);
+        } catch (\Exception $e) {
+            // @todo: provide a more clear error message, extract it from Google HTTP error message?
+            throw new GoogleSearchException('Error while getting the Google Search Engine API data', 0, $e);
+        }
 
-            $url = $this->getRequestUrl($this->googleApiKey, $this->googleSearchKey, $query, $lang, $start, $limit);
-            try {
-                $json = @file_get_contents($url);
-            }
-            catch (\Exception $e) {
-                // @todo: provide a more clear error message, extract it from Google HTTP error message?
-                throw new \Exception('Error while getting the Google Search Engine API data', 0, $e);
-            }
+        if ($json === false || is_null($json)) {
+            throw new GoogleSearchException('Empty response received from Google Search Engine API');
+        }
 
-            if ($json === false || is_null($json)) {
-                throw new \Exception('Error while decoding the Google Search Engine API data');
-            }
+        // Decoding JSON data as associative Array
+        $doc = json_decode($json, true);
 
-            // Decoding JSON data as associative Array
-            $doc = json_decode($json, true);
-
-            if ($doc === null) {
-                throw new \Exception('Error while decoding JSON data from Google Search Result');
-            }
+        if ($doc === null) {
+            throw new GoogleSearchException('Error while decoding JSON data from Google Search API');
         }
 
         return $this->extractSearchResults($doc);
