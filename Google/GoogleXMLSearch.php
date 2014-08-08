@@ -135,7 +135,7 @@ class GoogleXMLSearch
 
         $params = array(
             'key' => $this->googleApiKey,      // API key (REQUIRED)
-            'cx' => $this->$googleSearchKey,    // Custom search engine ID (REQUIRED)
+            'cx' => $this->googleSearchKey,    // Custom search engine ID (REQUIRED)
             // 'alt' => 'json',          // Data format for the response. Values: json|atom Default: json
             // 'fields' => null,         // Selector specifying a subset of fields to include in the response.
             'prettyPrint' => true,      // Returns response with indentations and line breaks. Default: true
