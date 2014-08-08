@@ -97,7 +97,7 @@ class GoogleXMLSearch
             );
         }
 
-        $url = $this->getRequestUrl($this->googleApiKey, $this->googleSearchKey, $query, $lang, $start, $limit);
+        $url = $this->getRequestUrl($query, $lang, $start, $limit);
         try {
             $json = @file_get_contents($url);
         } catch (\Exception $e) {
@@ -122,8 +122,6 @@ class GoogleXMLSearch
     /**
      * Builds request URL for google search XML API
      *
-     * @param string $googleApiKey key for the Google project
-     * @param string $googleSearchKey key for cse search service
      * @param string $query the search query (not encoded)
      * @param mixed $lang boolean false or language string (en, fr, de, etc.)
      * @param int $start item number to start with (first item is item 1)
@@ -131,13 +129,13 @@ class GoogleXMLSearch
      * @return array of search result information and items
      * @see https://developers.google.com/custom-search/json-api/v1/using_rest
      */
-    protected function getRequestUrl($googleApiKey, $googleSearchKey, $query, $lang, $start, $limit)
+    protected function getRequestUrl($query, $lang, $start, $limit)
     {
         $encodedQuery = $this->getGoogleEncodedString($query);
 
         $params = array(
-            'key' => $googleApiKey,      // API key (REQUIRED)
-            'cx' => $googleSearchKey,    // Custom search engine ID (REQUIRED)
+            'key' => $this->googleApiKey,      // API key (REQUIRED)
+            'cx' => $this->$googleSearchKey,    // Custom search engine ID (REQUIRED)
             // 'alt' => 'json',          // Data format for the response. Values: json|atom Default: json
             // 'fields' => null,         // Selector specifying a subset of fields to include in the response.
             'prettyPrint' => true,      // Returns response with indentations and line breaks. Default: true
