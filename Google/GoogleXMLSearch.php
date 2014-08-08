@@ -129,7 +129,7 @@ class GoogleXMLSearch
      * @return array of search result information and items
      * @see https://developers.google.com/custom-search/json-api/v1/using_rest
      */
-    protected function getRequestUrl($query, $lang, $start, $limit)
+    public function getRequestUrl($query, $lang, $start, $limit)
     {
         $encodedQuery = $this->getGoogleEncodedString($query);
 
@@ -138,7 +138,7 @@ class GoogleXMLSearch
             'cx' => $this->googleSearchKey,    // Custom search engine ID (REQUIRED)
             // 'alt' => 'json',          // Data format for the response. Values: json|atom Default: json
             // 'fields' => null,         // Selector specifying a subset of fields to include in the response.
-            'prettyPrint' => true,      // Returns response with indentations and line breaks. Default: true
+            // 'prettyPrint' => true,      // Returns response with indentations and line breaks. Default: true
             'start' => $start,            // The index of the first result to return (1-based index).
             'num' => $limit,              // Number of search results to return. Valid values: 1 to 10.
         );
