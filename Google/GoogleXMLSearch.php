@@ -239,8 +239,8 @@ class GoogleXMLSearch
         );
 
         // Adding extra content: page preview (if available)
-        if (isset($resultItemData['pagemap']['cse_thumbnail']) && !empty($resultItemData['pagemap']['cse_thumbnail'])) {
-            $thumbnail = current($resultItemData['pagemap']['cse_thumbnail']);
+        if (isset($resultItemData['pagemap']['thumbnail']) && !empty($resultItemData['pagemap']['thumbnail'])) {
+            $thumbnail = current($resultItemData['pagemap']['thumbnail']);
             $result['thumbnail'] = $thumbnail;
         }
 
