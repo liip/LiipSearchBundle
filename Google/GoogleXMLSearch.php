@@ -235,12 +235,13 @@ class GoogleXMLSearch
             'moreLikeThis' => false,
             'site' => parse_url($resultItemData['link'], PHP_URL_HOST),
             'index' => $index,
+            'formattedUrl' => $resultItemData['formattedUrl'],
             'thumbnail' => false,
         );
 
         // Adding extra content: page preview (if available)
-        if (isset($resultItemData['pagemap']['thumbnail']) && !empty($resultItemData['pagemap']['thumbnail'])) {
-            $thumbnail = current($resultItemData['pagemap']['thumbnail']);
+        if (isset($resultItemData['pagemap']['cse_thumbnail']) && !empty($resultItemData['pagemap']['cse_thumbnail'])) {
+            $thumbnail = current($resultItemData['pagemap']['cse_thumbnail']);
             $result['thumbnail'] = $thumbnail;
         }
 
