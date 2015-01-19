@@ -90,11 +90,15 @@ Include the bundle in your app/autoload.php and app/Kernel.php.
 
 You can include the default search box by rendering the showSearchBox action of the default search controller:
 
-    {{ render(controller('liip_search_default_controller:showSearchBoxAction', {'field_id':'query', 'query':'last_query'})) }}
+``` jinja
+{{ render(controller('liip_search_default_controller:showSearchBoxAction', {'field_id':'query', 'query':'last_query'})) }}
+```
 
 Or if you are on an old Symfony version that does not support this construct, you do:
 
-    {% render 'liip_search_default_controller:showSearchBoxAction' with {'field_id':'query', 'query':'last_query'} %}
+``` jinja
+{% render 'liip_search_default_controller:showSearchBoxAction' with {'field_id':'query', 'query':'last_query'} %}
+```
 
 The parameters you must pass are:
 
@@ -104,9 +108,10 @@ The parameters you must pass are:
 
 Create a route for the search action. The easiest is to just use the provided routing.yml from your main project routing.yml
 
-    liip_search:
-        resource: "@LiipSearchBundle/Resources/config/routing.yml"
-
+``` yaml
+liip_search:
+    resource: "@LiipSearchBundle/Resources/config/routing.yml"
+```
 
 It defaults to the route /search . If you want a different route, you can either
 use the liip_search.google:search action as the controller for that route or define
@@ -117,21 +122,25 @@ If you define you own action, you'll need to provide the query and page paramete
 rendering the liip_search.google search action from the twig template.
 Your custom search action method might look like this:
 
-    use Liip\SearchBundle\Helper\SearchParams;
-    ...
-    public function searchAction()
-    {
-        return $this->render('MyBundle:Search:search.html.twig',
-                array(
-                    'title' => 'Search'
-                    'query' => SearchParams::requestedQuery($request, $queryParamName),
-                    'page'  => SearchParams::requestedPage($request, $pageParamName),
-                ));
-    }
+``` php
+use Liip\SearchBundle\Helper\SearchParams;
+...
+public function searchAction()
+{
+    return $this->render('MyBundle:Search:search.html.twig',
+            array(
+                'title' => 'Search'
+                'query' => SearchParams::requestedQuery($request, $queryParamName),
+                'page'  => SearchParams::requestedPage($request, $pageParamName),
+            ));
+}
+```
 
 Where MyBundle:Search:search.html.twig renders the liip_search.google search action:
 
-    {{ render(controller("liip_search.google:searchAction", {'query': query, 'page': page})) }}
+``` jinja
+{{ render(controller("liip_search.google:searchAction", {'query': query, 'page': page})) }}
+```
 
 When rendering from a template like this, the query and page parameters must be provided.
 When rendered from a template, a subrequest is used, and liip_search.google:searchAction
@@ -142,9 +151,11 @@ page parameters from the Request.
 If, on the other hand, you choose to use the liip_search.google:search action, your route
 will look something like this:
 
-    search:
-        pattern: /search
-        defaults: { _controller: liip_search.google:search }
+``` yaml
+search:
+    pattern: /search
+    defaults: { _controller: liip_search.google:search }
+```
 
 If you're doing this, you'll want to override the templates so that you can include your
 site-specific layout.
@@ -164,7 +175,6 @@ Overriding the translations
 
 The translations used by the bundle can be overridden by creating an XLIFF file with the correct translations
 key and then setting the liip_search.translation_domain to the name of your translation file.
-
 
 TODO
 ----
