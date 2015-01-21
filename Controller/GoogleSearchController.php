@@ -80,8 +80,9 @@ class GoogleSearchController implements SearchInterface
 
         $lang = $this->queryLanguage($lang, $request);
 
+
         try {
-            $searchResults = $this->google->getSearchResults($query, $lang, ($page-1) * $this->perPage, $this->perPage);
+            $searchResults = $this->google->getSearchResults($query, $lang, ($page-1) * $this->perPage +1, $this->perPage);
         } catch(\Exception $e) {
             return new Response($this->templatingEngine->render('LiipSearchBundle:Search:failure.html.twig', array('searchTerm' => $query)));
         }
