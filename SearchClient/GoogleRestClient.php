@@ -9,9 +9,9 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Liip\SearchBundle\Google;
+namespace Liip\SearchBundle\SearchClient;
 
-use Liip\SearchBundle\Exception\GoogleSearchException;
+use Liip\SearchBundle\Exception\SearchException;
 use Liip\SearchBundle\SearchInterface;
 
 /**
@@ -19,134 +19,90 @@ use Liip\SearchBundle\SearchInterface;
  */
 class GoogleRestClient implements SearchInterface
 {
-    protected $googleApiKey;
-
-    protected $googleSearchAPIUrl;
-
-    protected $googleSearchKey;
-
-    protected $restrictToSite;
-
-    protected $restrictToLabels;
+    /**
+     * @var string
+     */
+    private $googleApiKey;
 
     /**
-     * @param string $google_api_key     Key for Google Project
-     * @param string $google_search_key  Key for cse search service
-     * @param $google_search_api_url
-     * @param string $restrict_to_site   If search results should be restricted to one site, specify the site
-     * @param array  $restrict_to_labels If search results should be restricted to one or more labels, specify the labels
+     * @var string
      */
-    public function __construct($google_api_key, $google_search_key, $google_search_api_url, $restrict_to_site, $restrict_to_labels)
+    private $googleSearchKey;
+
+    /**
+     * @var
+     */
+    private $googleSearchAPIUrl;
+
+    /**
+     * @var string|boolean
+     */
+    private $restrictToSite;
+
+    /**
+     * @param string         $apiKey         Key for Google Project
+     * @param string         $searchKey      Key for cse search service
+     * @param string         $apiUrl         REST API endpoint
+     * @param string|boolean $restrictToSite If search results should be restricted to one site, specify the site
+     */
+    public function __construct($apiKey, $searchKey, $apiUrl, $restrictToSite = false)
     {
-        $this->googleApiKey = $google_api_key;
-        $this->googleSearchKey = $google_search_key;
-        $this->googleSearchAPIUrl = $google_search_api_url;
-        $this->restrictToSite = $restrict_to_site;
-        $this->restrictToLabels = $restrict_to_labels;
+        $this->googleApiKey = $apiKey;
+        $this->googleSearchKey = $searchKey;
+        $this->googleSearchAPIUrl = $apiUrl;
+        $this->restrictToSite = $restrictToSite;
     }
 
     /**
      * Get search results from Google.
      *
-     * Returns an array of the form:
-     *   items => array(
-     *      array(
-     *        'title' => 'Liip AG // Firma // Jobs // Stellenangebot: JavaScript Developer 60 <b>...</b>'
-     *        'summary' => 'Liip AG - <b>Agile</b> Web Development. Zürich, Fribourg, Lausanne, Bern. Mobile <br>  Mode &middot; news &middot; Referenzen &middot; Dienstleistungen &middot; Technologie &middot; Firma &middot; Team &middot; Jobs <b>...</b>'
-     *        'url' => 'http://www.liip.ch/company/jobs/javascript-developer.html'
-     *        'moreLikeThis' => true   // if google can find "more pages like this"
-     *        'site' => 'www.liip.ch'  // hostname
-     *        'index' => '21'          // this item's index in the total number of search results: here for example, the search was done with $startItem = 20
-     *        'mimetype' => '??'       // may or may not be present. according to google documentation, this will have the MIME type of the result; I haven't seen it.  (perhaps only for doc, pdf, etc.?)
-     *      ),
-     *      array(
-     *          //...
-     *      ),
-     *      // etc.
-     *   ),
-     *   information => array(
-     *      'spellingSuggestions' => array(
-     *          'suggestedSpelling1',
-     *          'suggestedSpelling2',
-     *          // etc.
-     *      ),
-     *     'paging' => array(
-     *       'estimatedTotalItemCount' => 93,
-     *       'currentRequestItemRange' => array(
-     *         'start' => 21   // note: first item is 1 if search was done with startItem = 0
-     *         'end' => 30
-     *        )
-     *     )
-     *   )
-     *
-     * Either or both of 'items' and 'information' may be empty, if there were no matched results,
-     * or if there was an error processing the response.
-     * There are not always spellingSuggestions provided, but there may be, especially if no items were found.
-     *
-     * @param string $query the search query (not url encoded)
-     * @param mixed  $lang  boolean false or language string (en, fr, de, etc.)
-     * @param int    $start item number to start with (first item is item 1)
-     * @param int    $limit how many results at most to return
-     *
-     * @return array of search result information and items
-     *
-     * @throws \Exception
+     * {@inheritDoc}
      */
-    public function getSearchResults($query, $lang, $start, $limit)
+    public function search($query, $offset = null, $limit = null, $lang = false, $options = array())
     {
-        if (empty($query)) {
-            return array(
-                'items' => array(),
-                'information' => array(),
-            );
-        }
-
-        $url = $this->getRequestUrl($query, $lang, $start, $limit);
+        $url = $this->buildRequestUrl($query, $lang, $offset, $limit);
         try {
             $json = @file_get_contents($url);
         } catch (\Exception $e) {
             // @todo: provide a more clear error message, extract it from Google HTTP error message?
-            throw new GoogleSearchException('Error while getting the Google Search Engine API data', 0, $e);
+            throw new SearchException('Error while getting the Google Search Engine API data', 0, $e);
         }
 
         if ($json === false || is_null($json)) {
-            throw new GoogleSearchException('Empty response received from Google Search Engine API');
+            throw new SearchException('Empty response received from Google Search Engine API');
         }
 
         // Decoding JSON data as associative Array
         $doc = json_decode($json, true);
 
         if ($doc === null) {
-            throw new GoogleSearchException('Error while decoding JSON data from Google Search API');
+            throw new SearchException('Error while decoding JSON data from Google Search API: '.json_last_error_msg());
         }
 
         return $this->extractSearchResults($doc);
     }
 
     /**
-     * Builds request URL for google search XML API
+     * Builds request URL for google search REST API
      *
-     * @param string $query the search query (not encoded)
-     * @param mixed  $lang  boolean false or language string (en, fr, de, etc.)
-     * @param int    $start item number to start with (first item is item 1)
-     * @param int    $limit how many results at most to return (valid values: 1 to 10)
+     * @param string         $query the search query (not encoded)
+     * @param string|boolean $lang  boolean false or language string (en, fr, de, etc.)
+     * @param int            $start item number to start with (first item is item 1)
+     * @param int            $limit how many results at most to return (valid values: 1 to 10)
      *
      * @return array of search result information and items
      *
      * @see https://developers.google.com/custom-search/json-api/v1/using_rest
      */
-    public function getRequestUrl($query, $lang, $start, $limit)
+    private function buildRequestUrl($query, $lang, $start, $limit)
     {
         $encodedQuery = $this->getGoogleEncodedString($query);
 
         $params = array(
-            'key' => $this->googleApiKey,      // API key (REQUIRED)
-            'cx' => $this->googleSearchKey,    // Custom search engine ID (REQUIRED)
-            // 'alt' => 'json',          // Data format for the response. Values: json|atom Default: json
-            // 'fields' => null,         // Selector specifying a subset of fields to include in the response.
-            // 'prettyPrint' => true,      // Returns response with indentations and line breaks. Default: true
-            'start' => $start,            // The index of the first result to return (1-based index).
-            'num' => $limit,              // Number of search results to return. Valid values: 1 to 10.
+            'key' => $this->googleApiKey,
+            'cx' => $this->googleSearchKey,
+            'start' => $start,              // The index of the first result to return (1-based index).
+            'num' => $limit,       // Number of search results to return. Valid values: 1 to 10.
         );
 
         if ($lang !== false) {
@@ -159,11 +115,6 @@ class GoogleRestClient implements SearchInterface
             // Specifies all search results should be pages from a given site.
             $params['siteSearch'] = $this->restrictToSite;
         }
-        //elseif (!empty($this->restrictToLabels)) {
-        //    foreach ($this->restrictToLabels as $label) {
-        //        $encodedQuery .= '+more&3' . $label;
-        //    }
-        //}
 
         // The parameters don't have to be escaped (eg. ":" should remain as is)
         $queryString = '?'.urldecode(http_build_query($params)).'&q='.$encodedQuery;
@@ -181,7 +132,7 @@ class GoogleRestClient implements SearchInterface
      *
      * @return string encoded string
      */
-    protected function getGoogleEncodedString($string)
+    private function getGoogleEncodedString($string)
     {
         $encoded = rawurlencode($string);
         $encoded = str_replace(
@@ -197,11 +148,11 @@ class GoogleRestClient implements SearchInterface
     /**
      * Extract the search results from the Google search response
      *
-     * @param array $data
+     * @param array $data Raw google REST API result.
      *
      * @return array
      */
-    protected function extractSearchResults($data)
+    private function extractSearchResults(array $data)
     {
         $results = array(
             'items' => array(),
@@ -210,7 +161,7 @@ class GoogleRestClient implements SearchInterface
 
         // If the document is not an array, ot it is empty something went wrong here or the query was empty.
         if (!is_array($data) || empty($data)) {
-            return $results;
+            throw new SearchException('Unexpected empty result from google search API');
         }
 
         // Get count of estimated total available hits.
@@ -228,27 +179,24 @@ class GoogleRestClient implements SearchInterface
     }
 
     /**
-     * Extract the search results from the Google search response
+     * Extract a search result item from the google REST API.
      *
-     * @param $resultItemData
-     * @param $index
+     * @param array $resultItemData Information about this item.
+     * @param int   $index          Index of this item.
      *
      * @return array
      */
-    protected function extractSearchResultItem($resultItemData, $index)
+    private function extractSearchResultItem($resultItemData, $index)
     {
         $result = array(
-            'title' => $resultItemData['htmlTitle'],
-            'plainTitle' => $resultItemData['title'],
-            'summary' => $resultItemData['htmlSnippet'],
-            'plainSummary' => $resultItemData['snippet'],
+            'htmlTitle' => $resultItemData['htmlTitle'],
+            'title' => $resultItemData['title'],
+            'htmlSnippet' => $resultItemData['htmlSnippet'],
+            'snippet' => $resultItemData['snippet'],
             'url' => $resultItemData['link'],
-            // @todo Implement the "MoreLikeThis" identification and extraction
-            'moreLikeThis' => false,
             'site' => parse_url($resultItemData['link'], PHP_URL_HOST),
+            'htmlUrl' => $resultItemData['formattedUrl'],
             'index' => $index,
-            'formattedUrl' => $resultItemData['formattedUrl'],
-            'thumbnail' => false,
         );
 
         // Adding extra content: page preview (if available)
@@ -263,11 +211,11 @@ class GoogleRestClient implements SearchInterface
     /**
      * Gets paging information
      *
-     * @param $data
+     * @param array $data Raw google REST API result.
      *
      * @return array
      */
-    protected function extractSearchInformation($data)
+    private function extractSearchInformation(array $data)
     {
         $request = current($data['queries']['request']);
 

@@ -29,19 +29,54 @@ class LiipSearchExtension extends Extension
         $config = $this->processConfiguration(new Configuration(), $configs);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
 
-        if ($config['google']['search_key']) {
-            foreach ($config['google'] as $key => $value) {
-                $container->setParameter($this->getAlias().'.google.'.$key, $value);
+        foreach ($config['pager'] as $key => $value) {
+            $container->setParameter($this->getAlias().'.pager.'.$key, $value);
+            unset($config['pager']);
+        }
+
+        $search_client = $this->loadSearchClients($container, $loader, $config);
+
+        $container->setAlias(
+            $this->getAlias().'.default_search_client',
+            $search_client
+        );
+
+        $container->setParameter($this->getAlias().'.controller.options', $config);
+        $container->setParameter($this->getAlias().'.search_route', $config['search_route']);
+        $loader->load('services.yml');
+    }
+
+    public function loadSearchClients(ContainerBuilder $container, YamlFileLoader $loader, array &$config)
+    {
+        $client = $config['search_client'];
+        unset($config['search_client']);
+
+        if ($config['clients']['google_rest']['enabled']) {
+            foreach ($config['clients']['google_rest'] as $key => $value) {
+                $container->setParameter($this->getAlias().'.google_rest.'.$key, $value);
             }
 
-            $loader->load('google.yml');
-            unset($config['google']);
+            $loader->load('google_rest.yml');
+            if (empty($client)) {
+                $client = 'liip_search.search.google_rest_api';
+            }
         }
+        if ($config['clients']['google_cse']['enabled']) {
+            $config['options'] = array(
+                'search_template' => 'LiipSearchBundle:google:search.html.twig',
+                'box_template' => 'LiipSearchBundle:google:search_box.html.twig',
+                'template_options' => array(
+                    'google_custom_search_id', $config['clients']['google_cse']['cse_id'],
+                ),
+            );
+            $loader->load('google_cse.yml');
+            if (empty($client)) {
+                $client = 'liip_search.search.google_cse';
+            }
+        }
+        unset($config['clients']);
 
-        foreach ($config as $key => $value) {
-            $container->setParameter($this->getAlias().'.'.$key, $value);
-        }
+        return $client;
     }
 }

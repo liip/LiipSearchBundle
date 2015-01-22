@@ -1,0 +1,8 @@
+services:
+    liip_search.search.google_rest_api:
+        class: Liip\SearchBundle\SearchClient\GoogleRestClient
+        arguments:
+            - "%liip_search.google_rest.api_key%"
+            - "%liip_search.google_rest.search_key%"
+            - "%liip_search.google_rest.search_api_url%"
+            - "%liip_search.google_rest.restrict_to_site%"

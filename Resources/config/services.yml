@@ -1,21 +1,18 @@
 services:
-    liip_search_pager:
+    liip_search.pager:
         class: Liip\SearchBundle\Pager\Pager
         arguments:
-            router: "@router"
-            search_route: "%liip_search.search_route%"
-            max_head_items: "%liip_search.pager_max_head_items%"
-            max_tail_items: "%liip_search.pager_max_tail_items%"
-            max_adjoining_items: "%liip_search.pager_max_adjoining_items%"
-            query_param_name: "%liip_search.query_param_name%"
-            page_param_name: "%liip_search.page_param_name%"
+            - "@router"
+            - "%liip_search.search_route%"
+            - "%liip_search.pager.max_head_items%"
+            - "%liip_search.pager.max_tail_items%"
+            - "%liip_search.pager.max_adjoining_items%"
 
-    liip_search_default_controller:
-        class: Liip\SearchBundle\Controller\DefaultController
+    liip_search.controller.search:
+        class: Liip\SearchBundle\Controller\SearchController
         arguments:
-            templating_engine: "@templating"
-            router: "@router"
-            pager: "@liip_search_pager"
-            translation_domain: "%liip_search.translation_domain%"
-            query_param_name: "%liip_search.query_param_name%"
-            search_route: "%liip_search.search_route%"
+            - "@liip_search.default_search_client"
+            - "@templating"
+            - "@router"
+            - "@liip_search.pager"
+            - "%liip_search.controller.options%"

@@ -11,37 +11,36 @@
 
 namespace Liip\SearchBundle\Pager;
 
-use Symfony\Component\Routing\RouterInterface;
+use Liip\SearchBundle\Controller\SearchController;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Pager
 {
-    protected $router;
-    protected $searchRoute;
-    protected $maxHeadItems;
-    protected $maxTailItems;
-    protected $maxAdjoiningItems;
-    protected $queryParameterKey;
-    protected $pageParameterKey;
+    private $urlGenerator;
+    private $searchRoute;
+    private $maxHeadItems;
+    private $maxTailItems;
+    private $maxAdjoiningItems;
 
     /**
-     * @param RouterInterface $router
-     * @param string          $search_route
-     * @param integer         $max_head_items
-     * @param integer         $max_tail_items
-     * @param integer         $max_adjoining_items
-     * @param string          $query_parameter_key
-     * @param string          $page_parameter_key
+     * @param UrlGeneratorInterface $urlGenerator
+     * @param string                $searchRoute
+     * @param integer               $maxHeadItems
+     * @param integer               $maxTailItems
+     * @param integer               $maxAdjoiningItems
      */
-    public function __construct(RouterInterface $router, $search_route, $max_head_items, $max_tail_items, $max_adjoining_items,
-        $query_parameter_key, $page_parameter_key)
-    {
-        $this->router = $router;
-        $this->searchRoute = $search_route;
-        $this->maxHeadItems = $max_head_items;
-        $this->maxTailItems = $max_tail_items;
-        $this->maxAdjoiningItems = $max_adjoining_items;
-        $this->queryParameterKey = $query_parameter_key;
-        $this->pageParameterKey = $page_parameter_key;
+    public function __construct(
+        UrlGeneratorInterface $urlGenerator,
+        $searchRoute,
+        $maxHeadItems,
+        $maxTailItems,
+        $maxAdjoiningItems
+    ) {
+        $this->urlGenerator = $urlGenerator;
+        $this->searchRoute = $searchRoute;
+        $this->maxHeadItems = $maxHeadItems;
+        $this->maxTailItems = $maxTailItems;
+        $this->maxAdjoiningItems = $maxAdjoiningItems;
     }
 
     /**
@@ -79,13 +78,25 @@ class Pager
 
             if ($hasFirstPages) {
                 for ($i = 1; $i <= $this->maxHeadItems; $i++) {
-                    $pagingFirst[$i] = $this->router->generate($this->searchRoute, array($this->queryParameterKey => $query, $this->pageParameterKey => $i));
+                    $pagingFirst[$i] = $this->urlGenerator->generate(
+                        $this->searchRoute,
+                        array(
+                            SearchController::QUERY_PARAMETER => $query,
+                            SearchController::PAGE_PARAMETER => $i,
+                        )
+                    );
                 }
             }
 
             for ($i = 0; $i < $maxPrevious  && $resultNum > 0; $i++) {
                 $pageNum = $resultNum / $perPage;
-                $pagingPrev[$pageNum] = $this->router->generate($this->searchRoute, array($this->queryParameterKey => $query, $this->pageParameterKey => $pageNum));
+                $pagingPrev[$pageNum] = $this->urlGenerator->generate(
+                    $this->searchRoute,
+                    array(
+                        SearchController::QUERY_PARAMETER => $query,
+                        SearchController::PAGE_PARAMETER => $pageNum,
+                    )
+                );
                 $resultNum -= $perPage;
             }
             $pagingPrev = array_reverse($pagingPrev, true);
@@ -104,7 +115,13 @@ class Pager
 
             for ($i = 0; $i < $maxNext && $resultNum < $estimated; $i++) {
                 $pageNum = $resultNum / $perPage + 1;
-                $pagingNext[$pageNum] = $this->router->generate($this->searchRoute, array($this->queryParameterKey => $query, $this->pageParameterKey => $pageNum));
+                $pagingNext[$pageNum] = $this->urlGenerator->generate(
+                    $this->searchRoute,
+                    array(
+                        SearchController::QUERY_PARAMETER => $query,
+                        SearchController::PAGE_PARAMETER => $pageNum,
+                    )
+                );
                 $resultNum += $perPage;
             }
 
@@ -112,12 +129,27 @@ class Pager
 
             if ($hasLastPages) {
                 for ($i = $lastPage - $this->maxTailItems + 1; $i <= $lastPage; $i++) {
-                    $pagingLast[$i] = $this->router->generate($this->searchRoute, array($this->queryParameterKey => $query, $this->pageParameterKey => $i));
+                    $pagingLast[$i] = $this->urlGenerator->generate(
+                        $this->searchRoute, array(
+                            SearchController::QUERY_PARAMETER => $query,
+                            SearchController::PAGE_PARAMETER => $i,
+                        )
+                    );
                 }
             }
 
-            $dotsBefore = (sizeof($pagingFirst) > 0 || ($this->maxHeadItems === 0 && $currentPage-sizeof($pagingPrev) > 1));
-            $dotsAfter = (sizeof($pagingLast) > 0 || ($this->maxTailItems === 0 && $currentPage+sizeof($pagingNext) < $lastPage));
+            $dotsBefore =
+                sizeof($pagingFirst) > 0
+                || ($this->maxHeadItems === 0
+                    && $currentPage-sizeof($pagingPrev) > 1
+                )
+            ;
+            $dotsAfter =
+                sizeof($pagingLast) > 0
+                || ($this->maxTailItems === 0
+                    && $currentPage+sizeof($pagingNext) < $lastPage
+                )
+            ;
         }
 
         return array(
