@@ -14,19 +14,19 @@ namespace Liip\SearchBundle\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
-
 use Liip\SearchBundle\Pager\Pager;
 
 class DefaultController
 {
     /**
-     * @var \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface
+     * @var EngineInterface
      */
     protected $templating;
 
     /**
-     * @var \Symfony\Component\Routing\RouterInterface
+     * @var UrlGeneratorInterface
      */
     protected $router;
 
@@ -39,13 +39,12 @@ class DefaultController
     protected $searchRoute;
 
     /**
-     * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating
-     * @param \Symfony\Component\Routing\RouterInterface $router
-     * @param Pager $pager search pager service
-     * @param string $translation_domain
-     * @param string $query_parameter_key parameter name used for search term
-     * @param string $search_route route used for submitting search query
-     * @return \Liip\SearchBundle\Controller\DefaultController
+     * @param EngineInterface       $templating
+     * @param UrlGeneratorInterface $router
+     * @param Pager                 $pager               search pager service
+     * @param string                $translation_domain
+     * @param string                $query_parameter_key parameter name used for search term
+     * @param string                $search_route        route used for submitting search query
      */
     public function __construct(EngineInterface $templating, RouterInterface $router, $pager, $translation_domain, $query_parameter_key, $search_route)
     {
@@ -61,7 +60,8 @@ class DefaultController
      * Renders the search box
      *
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @return Response
      */
     public function showSearchBoxAction(Request $request)
     {
@@ -78,8 +78,8 @@ class DefaultController
      * @param integer $estimated
      * @param integer $start
      * @param integer $perPage
-     * @param string $query
-     * @param string $translationDomain
+     * @param string  $query
+     * @param string  $translationDomain
      *
      * @return Response
      */
@@ -91,6 +91,7 @@ class DefaultController
             $request->query->get('perPage'),
             $request->query->get('query')
         );
+
         return new Response($this->templating->render('LiipSearchBundle:Search:paging.html.twig',
             array(
                 'paging' => $paging,

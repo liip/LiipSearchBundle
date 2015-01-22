@@ -19,12 +19,12 @@ use Liip\SearchBundle\Google\GoogleXMLSearch;
 use Liip\SearchBundle\Helper\SearchParams;
 
 /**
- * Class for search with google's XML API interface.
+ * Class for search with google's REST API interface.
+ *
  * Requires a configured "Google site search" to be able to make queries.
  */
 class GoogleSearchController implements SearchInterface
 {
-
     protected $google;
     protected $templatingEngine;
     protected $perPage;
@@ -35,14 +35,14 @@ class GoogleSearchController implements SearchInterface
     protected $searchRoute;
 
     /**
-     * @param \Liip\SearchBundle\Google\GoogleXMLSearch $google_search
-     * @param \Symfony\Bundle\FrameworkBundle\Templating\EngineInterface $templating_engine
-     * @param integer $results_per_page
-     * @param boolean $restrict_by_language
-     * @param string $translation_domain
-     * @param string $page_parameter_key parameter name used for page
-     * @param string $query_parameter_key parameter name used for search term
-     * @param string $search_route route used for submitting search query
+     * @param GoogleXMLSearch $google_search
+     * @param EngineInterface $templating_engine
+     * @param integer         $results_per_page
+     * @param boolean         $restrict_by_language
+     * @param string          $translation_domain
+     * @param string          $page_parameter_key   parameter name used for page
+     * @param string          $query_parameter_key  parameter name used for search term
+     * @param string          $search_route         route used for submitting search query
      */
     public function __construct(GoogleXMLSearch $google_search, EngineInterface $templating_engine, $results_per_page, $restrict_by_language,
         $translation_domain, $page_parameter_key, $query_parameter_key, $search_route)
@@ -59,12 +59,13 @@ class GoogleSearchController implements SearchInterface
 
     /**
      * Search method
-     * @param mixed $query string current search query or null
-     * @param mixed $page string current result page to show or null
-     * @param mixed $lang string language to use for restricting search results, or null
-     * @param array $options any options which should be passed along to underlying search engine
-     * @param \Symfony\Component\HttpFoundation\Request current request object, will be automatically injected by symfony when called as an action
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param mixed   $query   string current search query or null
+     * @param mixed   $page    string current result page to show or null
+     * @param mixed   $lang    string language to use for restricting search results, or null
+     * @param array   $options any options which should be passed along to underlying search engine
+     * @param Request $request current request object, will be automatically injected by symfony when called as an action
+     *
+     * @return Response
      */
     public function searchAction($query = null, $page = null, $lang = null, $options = array(), Request $request = null)
     {
@@ -80,10 +81,9 @@ class GoogleSearchController implements SearchInterface
 
         $lang = $this->queryLanguage($lang, $request);
 
-
         try {
             $searchResults = $this->google->getSearchResults($query, $lang, ($page-1) * $this->perPage +1, $this->perPage);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return new Response($this->templatingEngine->render('LiipSearchBundle:Search:failure.html.twig', array('searchTerm' => $query)));
         }
 
@@ -112,8 +112,9 @@ class GoogleSearchController implements SearchInterface
     /**
      * Determine language used to restrict search results, if one should be used at all.
      * If $this->restrictByLanguage is false, this will return false.
-     * @param null $lang
-     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param null    $lang
+     * @param Request $request
+     *
      * @return mixed string(=locale) or bool(=false)
      */
     public function queryLanguage($lang = null, Request $request)
@@ -124,6 +125,7 @@ class GoogleSearchController implements SearchInterface
         if (null !== $lang) {
             return $lang;
         }
+
         return $request->getLocale();
     }
 }

@@ -12,10 +12,13 @@
 namespace Liip\SearchBundle\Google;
 
 use Liip\SearchBundle\Exception\GoogleSearchException;
+use Liip\SearchBundle\SearchInterface;
 
-class GoogleXMLSearch
+/**
+ * Adapter for google search REST API.
+ */
+class GoogleRestClient implements SearchInterface
 {
-
     protected $googleApiKey;
 
     protected $googleSearchAPIUrl;
@@ -27,12 +30,11 @@ class GoogleXMLSearch
     protected $restrictToLabels;
 
     /**
-     * @param string $google_api_key Key for Google Project
-     * @param string $google_search_key Key for cse search service
+     * @param string $google_api_key     Key for Google Project
+     * @param string $google_search_key  Key for cse search service
      * @param $google_search_api_url
-     * @param string $restrict_to_site If search results should be restricted to one site, specify the site
-     * @param array $restrict_to_labels If search results should be restricted to one or more labels, specify the labels
-     * @return \Liip\SearchBundle\Google\GoogleXMLSearch
+     * @param string $restrict_to_site   If search results should be restricted to one site, specify the site
+     * @param array  $restrict_to_labels If search results should be restricted to one or more labels, specify the labels
      */
     public function __construct($google_api_key, $google_search_key, $google_search_api_url, $restrict_to_site, $restrict_to_labels)
     {
@@ -82,11 +84,13 @@ class GoogleXMLSearch
      * There are not always spellingSuggestions provided, but there may be, especially if no items were found.
      *
      * @param string $query the search query (not url encoded)
-     * @param mixed $lang boolean false or language string (en, fr, de, etc.)
-     * @param int $start item number to start with (first item is item 1)
-     * @param int $limit how many results at most to return
-     * @throws \Exception
+     * @param mixed  $lang  boolean false or language string (en, fr, de, etc.)
+     * @param int    $start item number to start with (first item is item 1)
+     * @param int    $limit how many results at most to return
+     *
      * @return array of search result information and items
+     *
+     * @throws \Exception
      */
     public function getSearchResults($query, $lang, $start, $limit)
     {
@@ -123,10 +127,12 @@ class GoogleXMLSearch
      * Builds request URL for google search XML API
      *
      * @param string $query the search query (not encoded)
-     * @param mixed $lang boolean false or language string (en, fr, de, etc.)
-     * @param int $start item number to start with (first item is item 1)
-     * @param int $limit how many results at most to return (valid values: 1 to 10)
+     * @param mixed  $lang  boolean false or language string (en, fr, de, etc.)
+     * @param int    $start item number to start with (first item is item 1)
+     * @param int    $limit how many results at most to return (valid values: 1 to 10)
+     *
      * @return array of search result information and items
+     *
      * @see https://developers.google.com/custom-search/json-api/v1/using_rest
      */
     public function getRequestUrl($query, $lang, $start, $limit)
@@ -144,7 +150,7 @@ class GoogleXMLSearch
         );
 
         if ($lang !== false) {
-            $params['lr'] = 'lang_' . $lang;    // Restricts the search to documents written in a particular language
+            $params['lr'] = 'lang_'.$lang;    // Restricts the search to documents written in a particular language
             $params['hl'] =  $lang;             // Sets the user interface language. Google recommends explicitly
                                                 //   setting also for xml queries
         }
@@ -160,9 +166,10 @@ class GoogleXMLSearch
         //}
 
         // The parameters don't have to be escaped (eg. ":" should remain as is)
-        $queryString = '?' . urldecode(http_build_query($params)) . '&q=' . $encodedQuery;
+        $queryString = '?'.urldecode(http_build_query($params)).'&q='.$encodedQuery;
 
-        $url = $this->googleSearchAPIUrl . $queryString;
+        $url = $this->googleSearchAPIUrl.$queryString;
+
         return $url;
     }
 
@@ -171,6 +178,7 @@ class GoogleXMLSearch
      * See http://www.google.com/cse/docs/resultsxml.html#urlEscaping
      *
      * @param string string raw, non-encoded string
+     *
      * @return string encoded string
      */
     protected function getGoogleEncodedString($string)
@@ -182,12 +190,15 @@ class GoogleXMLSearch
             $encoded
         );
         $encoded = preg_replace('/(%20)+/', '+', $encoded);
+
         return $encoded;
     }
 
     /**
      * Extract the search results from the Google search response
+     *
      * @param array $data
+     *
      * @return array
      */
     protected function extractSearchResults($data)
@@ -206,10 +217,9 @@ class GoogleXMLSearch
         $results['information'] = $this->extractSearchInformation($data);
         $baseIndex = $results['information']['paging']['currentRequestItemRange']['start'];
 
-
         if (isset($data['items']) && count($data['items'])) {
             // Build the result set from the google response.
-            foreach($data['items'] as $index => $resultItem) {
+            foreach ($data['items'] as $index => $resultItem) {
                 $results['items'][] = $this->extractSearchResultItem($resultItem, $index + $baseIndex);
             }
         }
@@ -219,8 +229,10 @@ class GoogleXMLSearch
 
     /**
      * Extract the search results from the Google search response
+     *
      * @param $resultItemData
      * @param $index
+     *
      * @return array
      */
     protected function extractSearchResultItem($resultItemData, $index)
@@ -250,12 +262,15 @@ class GoogleXMLSearch
 
     /**
      * Gets paging information
+     *
      * @param $data
+     *
      * @return array
      */
     protected function extractSearchInformation($data)
     {
         $request = current($data['queries']['request']);
+
         return array(
             'searchTime' => $data['searchInformation']['searchTime'],
             'paging' => array(
@@ -263,8 +278,8 @@ class GoogleXMLSearch
                 'currentRequestItemRange' => array(
                     'start' => $request['startIndex'],
                     'end' => $request['startIndex'] + $request['count'] -1,
-                )
-            )
+                ),
+            ),
         );
     }
 }

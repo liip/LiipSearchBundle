@@ -12,23 +12,21 @@
 namespace Liip\SearchBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\NodeInterface;
 
 /**
-* This class contains the configuration information for the bundle
-*
-* This information is solely responsible for how the different configuration
-* sections are normalized, and merged.
-*
-* @author David Buchmann
-*/
+ * This class contains the configuration information for the bundle
+ *
+ * This information is solely responsible for how the different configuration
+ * sections are normalized, and merged.
+ */
 class Configuration implements ConfigurationInterface
 {
     /**
      * Returns the config tree builder.
      *
-     * @return \Symfony\Component\DependencyInjection\Configuration\NodeInterface
+     * @return NodeInterface
      */
     public function getConfigTreeBuilder()
     {

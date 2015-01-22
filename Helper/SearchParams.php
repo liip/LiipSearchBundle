@@ -15,15 +15,16 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SearchParams
 {
-
     /**
      * Extract the page from the request (looks in GET, then POST).
      * If not present in the request or if less than 1, 1 will be returned.
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param string $pageParameterKey
+     *
+     * @param Request $request
+     * @param string  $pageParameterKey
+     *
      * @return int
      */
-    static public function requestedPage(Request $request, $pageParameterKey)
+    public static function requestedPage(Request $request, $pageParameterKey)
     {
         $page = $request->query->get($pageParameterKey);
         if (null === $page) {
@@ -43,11 +44,13 @@ class SearchParams
     /**
      * Extract the trimmed query from the request (looks in GET, then POST).
      * If not present in the request, an empty string will be returned.
-     * @param \Symfony\Component\HttpFoundation\Request $request
-     * @param string $queryParameterKey
+     *
+     * @param Request $request
+     * @param string  $queryParameterKey
+     *
      * @return string
      */
-    static public function requestedQuery(Request $request, $queryParameterKey)
+    public static function requestedQuery(Request $request, $queryParameterKey)
     {
         $query = $request->query->get($queryParameterKey);
         if (null === $query) {

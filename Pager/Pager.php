@@ -24,14 +24,13 @@ class Pager
     protected $pageParameterKey;
 
     /**
-     * @param \Symfony\Component\Routing\RouterInterface $router
-     * @param string $search_route
-     * @param integer $max_head_items
-     * @param integer $max_tail_items
-     * @param integer $max_adjoining_items
-     * @param string $query_parameter_key
-     * @param string $page_parameter_key
-     * @return \Liip\SearchBundle\Pager\Pager
+     * @param RouterInterface $router
+     * @param string          $search_route
+     * @param integer         $max_head_items
+     * @param integer         $max_tail_items
+     * @param integer         $max_adjoining_items
+     * @param string          $query_parameter_key
+     * @param string          $page_parameter_key
      */
     public function __construct(RouterInterface $router, $search_route, $max_head_items, $max_tail_items, $max_adjoining_items,
         $query_parameter_key, $page_parameter_key)
@@ -49,7 +48,8 @@ class Pager
      * @param integer $estimated
      * @param integer $start
      * @param integer $perPage
-     * @param string $query
+     * @param string  $query
+     *
      * @return array
      */
     public function paging($estimated, $start, $perPage, $query)
@@ -108,7 +108,7 @@ class Pager
                 $resultNum += $perPage;
             }
 
-            $lastPage = (int)($estimated / $perPage) + 1;
+            $lastPage = (int) ($estimated / $perPage) + 1;
 
             if ($hasLastPages) {
                 for ($i = $lastPage - $this->maxTailItems + 1; $i <= $lastPage; $i++) {
@@ -127,7 +127,7 @@ class Pager
             'next' => $pagingNext,
             'last' => $pagingLast,
             'dotsBefore' => $dotsBefore,
-            'dotsAfter' => $dotsAfter
+            'dotsAfter' => $dotsAfter,
         );
     }
 }

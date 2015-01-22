@@ -113,13 +113,10 @@ The parameters you must pass are:
 * field_id - The ID of the html text field for the search. This parameter allows you to have more than one search box in a single page
 * query - [optional] Allows you to specify the last searched term with which the search input field will be populated
 
-
 Create a route for the search action. The easiest is to just use the provided routing.yml from your main project routing.yml
 
-``` yaml
-liip_search:
-    resource: "@LiipSearchBundle/Resources/config/routing.yml"
-```
+    liip_search:
+        resource: "@LiipSearchBundle/Resources/config/routing.yml"
 
 It defaults to the route /search . If you want a different route, you can either
 use the liip_search.google:search action as the controller for that route or define
