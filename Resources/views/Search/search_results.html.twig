@@ -4,29 +4,29 @@
     {% endblock %}
 
     {% block liip_search_results %}
-        <div id="search-results">
-        {% block liip_search_results_header %}
-            {% render(controller('liip_search.controller.search:showSearchBoxAction', {'field_id': 'query_repeat', 'query': query, 'css_class': 'advanced-search'})) %}
-        {% endblock %}
+        <div id="search-results" class="search-results">
+            {% block liip_search_results_header %}
+                {% render(controller('liip_search.controller.search:showSearchBoxAction', {'field_id': 'query_repeat', 'query': query, 'css_class': 'advanced-search'})) %}
+            {% endblock %}
 
-        {% block liip_search_results_main %}
-            {% if estimated %}
-                <p>
-                    {{ 'search_term'|transchoice(estimated, {'%query%': query,'%count%': estimated}, 'LiipSearchBundle') }}
-                </p>
+            {% block liip_search_results_main %}
+                {% if estimated %}
+                    <p class="search-results-summary">
+                        {{ 'search_term'|transchoice(estimated, {'%query%': query,'%count%': estimated}, 'LiipSearchBundle') }}
+                    </p>
                     {% include 'LiipSearchBundle:Search:search_result_items.html.twig' with {'search_results':search_results, 'query': query} %}
-            {% elseif(query) %}
-                <p>{% trans from 'LiipSearchBundle' %}search_noresults{% endtrans %}</p>
-            {% endif %}
-        {% endblock %}
+                {% elseif(query) %}
+                    <p class="search-results-summary">{% trans from 'LiipSearchBundle' %}search_noresults{% endtrans %}</p>
+                {% endif %}
+            {% endblock %}
 
-        {% block liip_search_results_footer %}
-            {% if show_paging  %}
-                <div class="pager">
-                    {% render(controller('liip_search.controller.search:showPagingAction', {'estimated': estimated, 'start': start, 'query': query})) %}
-                </div>
-            {% endif %}
-        {% endblock %}
+            {% block liip_search_results_footer %}
+                {% if show_paging  %}
+                    <div class="pager">
+                        {% render(controller('liip_search.controller.search:showPagingAction', {'estimated': estimated, 'start': start, 'query': query})) %}
+                    </div>
+                {% endif %}
+            {% endblock %}
         </div>
     {% endblock %}
 {% endblock %}

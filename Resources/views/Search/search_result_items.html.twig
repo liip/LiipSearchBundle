@@ -3,14 +3,14 @@
         <dt>
             <a href="{{ result.url }}">{{ result.htmlTitle | raw}}</a>
         </dt>
-        <dd class="search-results-content">
-            {% if result.thumbnail is defined and result.thumbnail %}
-                <img class="search-results-thumbnail" src="{{ result.thumbnail.src }}" alt="" />
-            {% endif %}
-            <div class="search-results-snippet">
-                {{ result.htmlSnippet | raw }}
-            </div>
+        {% if result.thumbnail is defined and result.thumbnail %}
+            <dd class="search-results-thumbnail">
+                <img src="{{ result.thumbnail.src }}" alt="" />
+            </dd>
+        {% endif %}
+        <dd class="search-results-snippet">
+            {{ result.htmlSnippet | raw }}
         </dd>
-        <dd class="search-results-path">{{ result.htmlUrl }}</dd>
+        <dd class="search-results-url">{{ result.url }}</dd>
     {% endfor %}
 </dl>

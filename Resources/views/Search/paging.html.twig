@@ -1,5 +1,5 @@
 <span class="offset" id="pager-label">{% trans from 'LiipSearchBundle' %}pagination.results_navigation{% endtrans %}</span>
-<ul role="navigation" aria-labelledby="pager-label">
+<ul role="navigation" aria-labelledby="pager-label" class="{% if paging.prev|length %}has-previous{% endif %}{% if paging.next|length %} has-next{% endif %}">
     {% if paging.prev|length %}
         <li><a class="pager-previous" href="{{ paging.prev[paging.current-1] }}">{% trans from 'LiipSearchBundle' %}pagination.prev_page{% endtrans %}</a></li>
     {% endif %}
