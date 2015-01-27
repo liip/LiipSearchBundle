@@ -1,29 +1,44 @@
-{% if paging.prev|length %}
-    <a class="additional_nav_prev" href="{{ paging.prev[paging.current-1] }}">{% trans from translationDomain %}previous{% endtrans %}</a>
-{% endif %}
-{% if paging.first|length %}
-    {% for page, url in paging.first %}
-        <a class="page" href="{{ url }}">{{ page }}</a>
+<span class="offset" id="pager-label">{% trans from 'LiipSearchBundle' %}pagination.results_navigation{% endtrans %}</span>
+<ul role="navigation" aria-labelledby="pager-label" class="{% if paging.prev|length %}has-previous{% endif %}{% if paging.next|length %} has-next{% endif %}">
+    {% if paging.prev|length %}
+        <li><a class="pager-previous" href="{{ paging.prev[paging.current-1] }}">{% trans from 'LiipSearchBundle' %}pagination.prev_page{% endtrans %}</a></li>
+    {% endif %}
+    {% if paging.first|length %}
+        {% for page, url in paging.first %}
+            <li><a class="page" href="{{ url }}"><span class="offset">{% trans%}pagination.page{% endtrans %}</span> {{ page }}</a></li>
+        {% endfor %}
+    {% endif %}
+    {% if paging.dotsBefore %}
+        <li>
+            <span class="offset">{% trans from 'LiipSearchBundle' %}pagination.pages_skipped{% endtrans %}</span>
+            <span class="dots">...</span>
+        </li>
+    {% endif %}
+    {% for page, url in paging.prev %}
+        <li><a href="{{ url }}"><span class="offset">{% trans from 'LiipSearchBundle' %}pagination.page{% endtrans %}</span> {{ page }}</a></li>
     {% endfor %}
-{% endif %}
-{% if paging.dotsBefore %}
-    ...
-{% endif %}
-{% for page, url in paging.prev %}
-    <a class="page" href="{{ url }}">{{ page }}</a>
-{% endfor %}
-<a class="page current-page" href="#">{{ paging.current }}</a>
-{% for page, url in paging.next %}
-    <a class="page" href="{{ url }}">{{ page }}</a>
-{% endfor %}
-{% if paging.dotsAfter %}
-    ...
-{% endif %}
-{% if paging.last|length %}
-    {% for page, url in paging.last %}
-        <a class="page" href="{{ url }}">{{ page }}</a>
+    <li>
+        <a class="page current-page" href="#">
+            <span class="offset">{% trans from 'LiipSearchBundle' %}pagination.page{% endtrans %}</span>
+            {{ paging.current }}
+            <span class="offset">{% trans from 'LiipSearchBundle' %}pagination.current_page{% endtrans %}</span>
+        </a>
+    </li>
+    {% for page, url in paging.next %}
+        <li><a href="{{ url }}"><span class="offset">{% trans from 'LiipSearchBundle' %}pagination.page{% endtrans %}</span> {{ page }}</a></li>
     {% endfor %}
-{% endif %}
-{% if paging.next|length %}
-    <a class="additional_nav_next" href="{{ paging.next[paging.current+1] }}">{% trans from translationDomain %}next{% endtrans %}</a>
-{% endif %}
+    {% if paging.dotsAfter %}
+        <li>
+            <span class="offset">{% trans from 'LiipSearchBundle' %}pagination.pages_skipped{% endtrans %}</span>
+            <span class="dots">...</span>
+        </li>
+    {% endif %}
+    {% if paging.last|length %}
+        {% for page, url in paging.last %}
+            <li><a href="{{ url }}"><span class="offset">{% trans from 'LiipSearchBundle' %}pagination.page{% endtrans %}</span> {{ page }}</a></li>
+        {% endfor %}
+    {% endif %}
+    {% if paging.next|length %}
+        <li><a class="pager-next" href="{{ paging.next[paging.current+1] }}">{% trans from 'LiipSearchBundle' %}pagination.next_page{% endtrans %}</a></li>
+    {% endif %}
+</ul>

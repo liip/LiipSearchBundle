@@ -1,0 +1,22 @@
+{% block liip_search_content %}
+    {% block liip_search_title %}
+        <h1>{% trans from 'LiipSearchBundle' %}search{% endtrans %}</h1>
+    {% endblock %}
+
+    {% block liip_search_results %}
+        <script type="application/javascript">
+            (function() {
+                var cx = '{{ google_custom_search_id }}';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+                '//www.google.com/cse/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+            })();
+        </script>
+
+        <gcse:search noResultsString="{{ 'search_noresults'|trans({}, 'LiipSearchBundle')|escape('html') }}"></gcse:search>
+    {% endblock %}
+{% endblock %}

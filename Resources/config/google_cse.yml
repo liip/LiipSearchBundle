@@ -1,0 +1,3 @@
+services:
+    liip_search.search.google_cse:
+        class: Liip\SearchBundle\SearchClient\GoogleCseClient

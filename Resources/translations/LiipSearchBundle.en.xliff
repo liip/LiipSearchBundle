@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="search_term">
+                <source>search_term</source>
+                <target>%count% result for &quot;%query%&quot; has been found.|%count% results for &quot;%query%&quot; have been found.</target>
+            </trans-unit>
+            <trans-unit id="search_noresults">
+                <source>search_noresults</source>
+                <target>Sorry, I found no results for your query on the website.</target>
+            </trans-unit>
+            <trans-unit id="search_failure">
+                <source>search_failure</source>
+                <target>We are very sorry, but the search service is not available at the moment.</target>
+            </trans-unit>
+            <trans-unit id="search">
+                <source>search</source>
+                <target>Search</target>
+            </trans-unit>
+            <trans-unit id="search_site">
+                <source>search_site</source>
+                <target>Search this site</target>
+            </trans-unit>
+            <trans-unit id="send">
+                <source>send</source>
+                <target>Search</target>
+            </trans-unit>
+            <trans-unit id="pagination.prev">
+                <source>pagination.prev</source>
+                <target>Previous</target>
+            </trans-unit>
+            <trans-unit id="pagination.next">
+                <source>pagination.next</source>
+                <target>Next</target>
+            </trans-unit>
+            <trans-unit id="pagination.prev_page">
+                <source>pagination.prev_page</source>
+                <target>Previous page</target>
+            </trans-unit>
+            <trans-unit id="pagination.next_page">
+                <source>pagination.next_page</source>
+                <target>Next page</target>
+            </trans-unit>
+            <trans-unit id="pagination.page">
+                <source>pagination.page</source>
+                <target>Page number</target>
+            </trans-unit>
+            <trans-unit id="pagination.current_page">
+                <source>pagination.current_page</source>
+                <target>Current page</target>
+            </trans-unit>
+            <trans-unit id="pagination.pages_skipped">
+                <source>pagination.pages_skipped</source>
+                <target>Skipped pages</target>
+            </trans-unit>
+            <trans-unit id="pagination.results_navigation">
+                <source>pagination.results_navigation</source>
+                <target>Search results navigation</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
