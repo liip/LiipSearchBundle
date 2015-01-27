@@ -10,6 +10,7 @@
  */
 
 namespace Liip\SearchBundle;
+
 use Liip\SearchBundle\Exception\SearchException;
 
 /**

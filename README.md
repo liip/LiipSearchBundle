@@ -1,8 +1,9 @@
 LiipSearchBundle
 ================
 
-This bundle provides a wrapper around search engines and a controller with
-twig templates to render search forms and results.
+This bundle provides a uniform interface for full text search with various 
+search engines and a controller with twig templates to render search forms and 
+results.
 
 Introduction
 ------------
@@ -28,6 +29,16 @@ Installation
 Install the bundle with `composer require liip/search-bundle`.
 
 Include the bundle in app/Kernel.php.
+
+Add your preferred search engine in app/config/config.yml:
+
+```yaml
+liip_search:
+    clients:
+        google_rest:
+            api_key: '%google.api_key%'
+            search_key: '%google.search_key%'
+```
 
 Usage
 -----
@@ -61,23 +72,26 @@ site, override the layout.html.twig template in app/Resources and provide an emp
 Of course you can also override any of the templates.
 See http://symfony.com/doc/master/book/templating.html#overriding-bundle-templates
 
-Configuration
--------------
-These parameters can be configured in your config.yml:
+Configuration Reference
+-----------------------
+
+This is the full reference of what you can configure under the ``liip_search`` key:
 
 ``search_client``
 
 **string**, default value: null
 
-If you configure the `google` section, you do not need this field.
-Otherwise, you need to set this to a service implementing 
-`Liip\SearchBundle\SearchInterface`.
+Specify a custom service that handles searches with the default controller.
+That service class must implement `Liip\SearchBundle\SearchInterface`.
+
+If you configure one of the clients in the `clients` section, you do not need 
+to set this field.
 
 ``search_route``
 
 **string**, default value: liip_search
 
-This is the name of the route that will handle submitted search requests
+The name of the route that will handle submitted search requests
 
 ``restrict_language``
 
@@ -85,12 +99,6 @@ This is the name of the route that will handle submitted search requests
   
 Change this to true if you want to ask the search service to restrict to 
 results that it thinks are in the language of the request.
-
-``results_per_page``
-
-**integer**, default value: 10
-
-How many search results to display per page.
 
 ### Pager
 
@@ -104,6 +112,12 @@ Previous page  1 2 ... 5 6 *7* 8 9 ... 17 18  Next page
                ^            ^              ^
          Head Items   Adjoining Items    Tail Items
 ```
+
+``results_per_page``
+
+**integer**, default value: 10
+
+How many search results to display per page.
 
 ``max_head_items``
 
@@ -157,6 +171,12 @@ The Google Search API URL for REST calls
 
 If left empty, all sites configured for the google search engines are searched.
 Set to a a domain to limit to that domain.
+
+Adding your own Search Service
+------------------------------
+
+Implement the `Liip\SearchBundle\SearchInterface` and configure it as a service.
+Then set `liip_search.search_client` to that service name.
 
 TODO
 ----

@@ -31,7 +31,11 @@ class LiipSearchExtension extends Extension
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
         foreach ($config['pager'] as $key => $value) {
-            $container->setParameter($this->getAlias().'.pager.'.$key, $value);
+            if ('results_per_page' === $key) {
+                $config['results_per_page'] = $value;
+            } else {
+                $container->setParameter($this->getAlias().'.pager.'.$key, $value);
+            }
             unset($config['pager']);
         }
 
