@@ -18,8 +18,10 @@ Provided for you are:
 
 ### Built-in Search Engines Support
 
-For now, only [Google site search](http://www.google.com/sitesearch/) is 
-supported out of the box. The implementation uses the Google REST API.
+For now, [Google site search](http://www.google.com/sitesearch/) is supported 
+out of the box. The implementation uses the Google REST API. You can 
+alternatively use the [Custom Search Engine](https://www.google.ch/cse) feature 
+that loads the search in the frontend.
 
 Contributions for other services are welcome.
 
@@ -43,24 +45,30 @@ liip_search:
 Usage
 -----
 
-You can display the default search box by rendering the showSearchBoxAction:
+You can display a search box anywhere on the page with the liip_search_box twig function:
 
 ``` jinja
-{{ render(controller('liip_search_default_controller:showSearchBoxAction', {'field_id':'query', 'query':'last_query'})) }}
+{{ liip_search_box(query, 'query-field-id', 'css-class') }}
 ```
 
-The parameters you must pass are:
+You can customize the search box with these parameters:
 
-* field_id - The ID of the html text field for the search. This parameter allows you to have more than one search box in a single page
-* query - [optional] Allows you to specify the last searched term with which the search input field will be populated
+* query - default query to display
+* fieldId - HTML id to use for the search input field. Use different ids when 
+  having more than one search box on your page, e.g. in the header and in content.
+* cssClass - A css class to apply to the whole search box `<form>`.
 
-Create a route for the search action. The easiest is to just use the provided routing.yml from your main project routing.yml
+Create a route for the search action. The easiest is to just use the provided 
+routing.xml from your main project routing.xml:
 
+```
     liip_search:
-        resource: "@LiipSearchBundle/Resources/config/routing.yml"
+        resource: "@LiipSearchBundle/Resources/config/routing.xml"
+```
 
-It defaults to the URL `/search`. If you want a different route, configure your
-own route with the `liip_search.controller.search:searchAction`.
+It defaults to the URL `/search`. If you want a different route, use the `prefix` 
+option when including the route or configure your own route using 
+`%liip_search.controller.search_action%` as default value for `_controller`.
 
 ### Customizing Templating
 
@@ -77,75 +85,34 @@ Configuration Reference
 
 This is the full reference of what you can configure under the ``liip_search`` key:
 
-``search_client``
+``search_factory``
 
 **string**, default value: null
 
-Specify a custom service that handles searches with the default controller.
-That service class must implement `Liip\SearchBundle\SearchInterface`.
+Specify a custom service that implements the `Liip\SearchBundle\SearchFactoryInterface`. 
+This service will be used by the controller to create `Pagerfanta` instances to handle
+the search.
 
-If you configure one of the clients in the `clients` section, you do not need 
-to set this field.
+If you configure one of the search engine services, you do not need to set this 
+field.
 
 ``search_route``
 
 **string**, default value: liip_search
 
-The name of the route that will handle submitted search requests
+The name of the route that will handle submitted search requests.
 
 ``restrict_language``
 
 **boolean**, default value: false
   
-Change this to true if you want to ask the search service to restrict to 
-results that it thinks are in the language of the request.
-
-### Pager
-
-To tweak the pager, a couple of options can be configured in the ``pager`` section.
-
-The paging does not list all pages to avoid overly long lists when there are 
-many search results. The default configuration leads to:
-
-```
-Previous page  1 2 ... 5 6 *7* 8 9 ... 17 18  Next page
-               ^            ^              ^
-         Head Items   Adjoining Items    Tail Items
-```
-
-``results_per_page``
-
-**integer**, default value: 10
-
-How many search results to display per page.
-
-``max_head_items``
-
-**integer**, default value: 2
-
-How many page links to always show at the beginning of the search results.
-For example, with a value of 2, this always shows page 1 and 2 if there are that many pages in the result.
-Set to 0 to not show any first page.
-
-``max_tail_items``
-
-**integer**, default value: 2
-
-How many page links to always show at the end of the search results.
-For example, with a value of 2, this always shows page n-1 and n, where n is the last page of results
-Set to 0 to not show any last pages.
-
-``max_adjoining_items``
-
-**integer**, default value: 2
-
-How many page links to always show before and after the current page.
-For example, with a value of 2, on page 6 of the results, 2 would show 
-``... 4 5 *6* 7 8 ...``
+Change this to true if you want to ask the search service to restrict the
+results to the language of the request.
 
 ### Google Search Engine Integration
 
-Configuring any of these options enables the google search engine service.
+Configuring any of these options enables the google search engine service. They 
+are located under ``clients.google_rest``.
 
 ``api_key``
 
@@ -155,9 +122,13 @@ Your [Google API key](https://code.google.com/apis/console)
 
 ``search_key``
 
-**string**, required
+**string|array**, required
 
-The key identifying your [Google Search Engine](https://www.google.com/cse/all)
+The key identifying your [Google Search Engine](https://www.google.com/cse).
+May be a list of keys indexed by locale to use different engines per locale.
+If you control locales through separate search engines, you do not need to set
+`restrict_language` to true unless you want your custom search engines to 
+receive a language restriction additionally.
 
 ``api_url``
 

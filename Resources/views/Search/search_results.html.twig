@@ -6,7 +6,7 @@
     {% block liip_search_results %}
         <div id="search-results" class="search-results">
             {% block liip_search_results_header %}
-                {% render(controller('liip_search.controller.search:showSearchBoxAction', {'field_id': 'query_repeat', 'query': query, 'css_class': 'advanced-search'})) %}
+                {{ liip_search_box(query, 'query_repeat', 'advanced-search') }}
             {% endblock %}
 
             {% block liip_search_results_main %}
@@ -21,9 +21,9 @@
             {% endblock %}
 
             {% block liip_search_results_footer %}
-                {% if show_paging  %}
+                {% if pager is defined %}
                     <div class="pager">
-                        {% render(controller('liip_search.controller.search:showPagingAction', {'estimated': estimated, 'start': start, 'query': query})) %}
+                        {{ pagerfanta(pager) }}
                     </div>
                 {% endif %}
             {% endblock %}

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Liip/SearchBundle
+ * This file is part of the LiipSearchBundle
  *
  * (c) Liip AG
  *
@@ -12,12 +12,14 @@
 namespace Liip\SearchBundle\SearchClient;
 
 use Liip\SearchBundle\Exception\SearchException;
+use Liip\SearchBundle\SearchFactoryInterface;
 use Liip\SearchBundle\SearchInterface;
+use Pagerfanta\Adapter\AdapterInterface;
 
 /**
  * Adapter for google search REST API.
  */
-class GoogleRestClient implements SearchInterface
+class GoogleRestAdapter implements AdapterInterface
 {
     /**
      * @var string
@@ -35,22 +37,41 @@ class GoogleRestClient implements SearchInterface
     private $googleSearchAPIUrl;
 
     /**
+     * @var string
+     */
+    private $query;
+
+    /**
+     * @var string
+     */
+    private $lang;
+
+    /**
      * @var string|boolean
      */
     private $restrictToSite;
 
     /**
+     * @var boolean Number of results found.
+     */
+    private $totalResults = false;
+
+    /**
      * @param string         $apiKey         Key for Google Project
      * @param string         $searchKey      Key for cse search service
      * @param string         $apiUrl         REST API endpoint
+     * @param string         $query          The search query to use.
+     * @param string         $lang           The language to restrict to, or false to not limit.
      * @param string|boolean $restrictToSite If search results should be restricted to one site, specify the site
      */
-    public function __construct($apiKey, $searchKey, $apiUrl, $restrictToSite = false)
+    public function __construct($apiKey, $searchKey, $apiUrl, $query, $lang, $restrictToSite = false)
     {
         $this->googleApiKey = $apiKey;
         $this->googleSearchKey = $searchKey;
         $this->googleSearchAPIUrl = $apiUrl;
         $this->restrictToSite = $restrictToSite;
+        $this->query = $query;
+        $this->lang = $lang;
     }
 
     /**
@@ -58,9 +79,10 @@ class GoogleRestClient implements SearchInterface
      *
      * {@inheritDoc}
      */
-    public function search($query, $offset = null, $limit = null, $lang = false, $options = array())
+    public function getSlice($offset, $length)
     {
-        $url = $this->buildRequestUrl($query, $lang, $offset, $limit);
+        $offset++; // this seems 0 based, google is 1 based
+        $url = $this->buildRequestUrl($offset, $length);
         try {
             $json = @file_get_contents($url);
         } catch (\Exception $e) {
@@ -83,10 +105,20 @@ class GoogleRestClient implements SearchInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getNbResults()
+    {
+        if (false === $this->totalResults) {
+            $this->getSlice(0, 1);
+        }
+
+        return $this->totalResults;
+    }
+
+    /**
      * Builds request URL for google search REST API
      *
-     * @param string         $query the search query (not encoded)
-     * @param string|boolean $lang  boolean false or language string (en, fr, de, etc.)
      * @param int            $start item number to start with (first item is item 1)
      * @param int            $limit how many results at most to return (valid values: 1 to 10)
      *
@@ -94,9 +126,9 @@ class GoogleRestClient implements SearchInterface
      *
      * @see https://developers.google.com/custom-search/json-api/v1/using_rest
      */
-    private function buildRequestUrl($query, $lang, $start, $limit)
+    private function buildRequestUrl($start, $limit)
     {
-        $encodedQuery = $this->getGoogleEncodedString($query);
+        $encodedQuery = $this->getGoogleEncodedString($this->query);
 
         $params = array(
             'key' => $this->googleApiKey,
@@ -105,10 +137,10 @@ class GoogleRestClient implements SearchInterface
             'num' => $limit,       // Number of search results to return. Valid values: 1 to 10.
         );
 
-        if ($lang !== false) {
-            $params['lr'] = 'lang_'.$lang;    // Restricts the search to documents written in a particular language
-            $params['hl'] =  $lang;             // Sets the user interface language. Google recommends explicitly
-                                                //   setting also for xml queries
+        if ($this->lang !== false) {
+            $params['lr'] = 'lang_'.$this->lang; // Restricts the search to documents written in a particular language
+            $params['hl'] =  $this->lang;        // Sets the user interface language. Google recommends explicitly
+                                                 //   setting also for xml queries
         }
 
         if ($this->restrictToSite) {
@@ -154,25 +186,19 @@ class GoogleRestClient implements SearchInterface
      */
     private function extractSearchResults(array $data)
     {
-        $results = array(
-            'items' => array(),
-            'information' => array(),
-        );
-
         // If the document is not an array, ot it is empty something went wrong here or the query was empty.
         if (!is_array($data) || empty($data)) {
             throw new SearchException('Unexpected empty result from google search API');
         }
 
         // Get count of estimated total available hits.
-        $results['information'] = $this->extractSearchInformation($data);
-        $baseIndex = $results['information']['paging']['currentRequestItemRange']['start'];
+        $metaInformation = $this->extractMetaInformation($data);
+        $this->totalResults = $metaInformation['totalResults'];
+        $baseIndex = $metaInformation['startIndex'];
 
-        if (isset($data['items']) && count($data['items'])) {
-            // Build the result set from the google response.
-            foreach ($data['items'] as $index => $resultItem) {
-                $results['items'][] = $this->extractSearchResultItem($resultItem, $index + $baseIndex);
-            }
+        $results = array();
+        foreach ($data['items'] as $index => $resultItem) {
+            $results[] = $this->extractSearchResultItem($resultItem, $index + $baseIndex);
         }
 
         return $results;
@@ -215,19 +241,13 @@ class GoogleRestClient implements SearchInterface
      *
      * @return array
      */
-    private function extractSearchInformation(array $data)
+    private function extractMetaInformation(array $data)
     {
         $request = current($data['queries']['request']);
 
         return array(
-            'searchTime' => $data['searchInformation']['searchTime'],
-            'paging' => array(
-                'estimatedTotalItemCount' => $data['searchInformation']['totalResults'],
-                'currentRequestItemRange' => array(
-                    'start' => $request['startIndex'],
-                    'end' => $request['startIndex'] + $request['count'] -1,
-                ),
-            ),
+            'totalResults' => $data['searchInformation']['totalResults'],
+            'startIndex' => $request['startIndex'],
         );
     }
 }

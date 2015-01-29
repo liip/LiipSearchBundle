@@ -16,17 +16,17 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "symfony/framework-bundle": "~2.1"
+        "symfony/framework-bundle": "~2.3",
+        "white-october/pagerfanta-bundle": "~1.0"
     },
     "autoload": {
-        "psr-0": {
-            "Liip\\SearchBundle": ""
+        "psr-4": {
+            "Liip\\SearchBundle\\": ""
         }
     },
-    "target-dir" : "Liip/SearchBundle",
-        "extra": {
+    "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "2.0-dev"
         }
     }
 }

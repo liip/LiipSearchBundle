@@ -26,38 +26,6 @@
                 <source>send</source>
                 <target>Suchen</target>
             </trans-unit>
-            <trans-unit id="pagination.prev">
-                <source>pagination.prev</source>
-                <target>zurück</target>
-            </trans-unit>
-            <trans-unit id="pagination.next">
-                <source>pagination.next</source>
-                <target>weiter</target>
-            </trans-unit>
-            <trans-unit id="pagination.prev_page">
-                <source>pagination.prev_page</source>
-                <target>Vorherige Seite</target>
-            </trans-unit>
-            <trans-unit id="pagination.next_page">
-                <source>pagination.next_page</source>
-                <target>Nächste Seite</target>
-            </trans-unit>
-            <trans-unit id="pagination.page_number">
-                <source>pagination.page</source>
-                <target>Seite</target>
-            </trans-unit>
-            <trans-unit id="pagination.current_page">
-                <source>pagination.current_page</source>
-                <target>Aktuelle Seite</target>
-            </trans-unit>
-            <trans-unit id="pagination.pages_skipped">
-                <source>pagination.pages_skipped</source>
-                <target>Übersprungene Seiten</target>
-            </trans-unit>
-            <trans-unit id="pagination.results_navigation">
-                <source>pagination.results_navigation</source>
-                <target>Suchresultate-Navigation</target>
-            </trans-unit>
         </body>
     </file>
 </xliff>

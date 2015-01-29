@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Liip/SearchBundle
+ * This file is part of the LiipSearchBundle
  *
  * (c) Liip AG
  *
@@ -12,6 +12,7 @@
 namespace Liip\SearchBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
@@ -28,59 +29,75 @@ class LiipSearchExtension extends Extension
     {
         $config = $this->processConfiguration(new Configuration(), $configs);
 
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
-        foreach ($config['pager'] as $key => $value) {
-            if ('results_per_page' === $key) {
-                $config['results_per_page'] = $value;
-            } else {
-                $container->setParameter($this->getAlias().'.pager.'.$key, $value);
-            }
-            unset($config['pager']);
-        }
-
-        $search_client = $this->loadSearchClients($container, $loader, $config);
+        $searchFactory = $this->loadSearchClients($container, $loader, $config);
 
         $container->setAlias(
-            $this->getAlias().'.default_search_client',
-            $search_client
+            $this->getAlias().'.default_search_factory',
+            $searchFactory
         );
 
-        $container->setParameter($this->getAlias().'.controller.options', $config);
-        $container->setParameter($this->getAlias().'.search_route', $config['search_route']);
-        $loader->load('services.yml');
+        foreach (array('search_route', 'restrict_language', 'max_per_page') as $key) {
+            $container->setParameter($this->getAlias().'.'.$key, $config[$key]);
+        }
+
+        $controllerOptions = array(
+            'query_param_name' => $config['query_param_name'],
+            'page_param_name' => $config['page_param_name'],
+        );
+        $container->setParameter($this->getAlias().'.controller.paged_search_options', $controllerOptions);
+
+        $twigOptions = array(
+            'query_param_name' => $config['query_param_name'],
+            'search_route' => $config['search_route'],
+        );
+        $container->setParameter($this->getAlias().'.twig.searchbox_options', $twigOptions);
     }
 
-    public function loadSearchClients(ContainerBuilder $container, YamlFileLoader $loader, array &$config)
+    public function loadSearchClients(ContainerBuilder $container, XmlFileLoader $loader, array &$config)
     {
-        $client = $config['search_client'];
-        unset($config['search_client']);
+        $factory = $config['search_factory'];
+        unset($config['search_factory']);
+        $frontend = false;
+        $backend = empty($factory);
+        $controller = 'liip_search.controller.paged_search:searchAction';
 
         if ($config['clients']['google_rest']['enabled']) {
             foreach ($config['clients']['google_rest'] as $key => $value) {
                 $container->setParameter($this->getAlias().'.google_rest.'.$key, $value);
             }
-
-            $loader->load('google_rest.yml');
-            if (empty($client)) {
-                $client = 'liip_search.search.google_rest_api';
+            $backend = true;
+            $loader->load('google_rest.xml');
+            if (empty($factory)) {
+                $factory = 'liip_search.google_rest.factory';
             }
         }
         if ($config['clients']['google_cse']['enabled']) {
-            $config['options'] = array(
+            $container->setParameter($this->getAlias().'.controller.frontend_search', array(
                 'search_template' => 'LiipSearchBundle:google:search.html.twig',
                 'box_template' => 'LiipSearchBundle:google:search_box.html.twig',
                 'template_options' => array(
                     'google_custom_search_id', $config['clients']['google_cse']['cse_id'],
                 ),
-            );
-            $loader->load('google_cse.yml');
-            if (empty($client)) {
-                $client = 'liip_search.search.google_cse';
+            ));
+            $frontend = true;
+            $loader->load('google_cse.xml');
+            if (empty($factory)) {
+                $controller = 'liip_search.controller.frontend_search:searchAction';
+                $factory = 'liip_search.google_cse.factory';
             }
         }
+        $container->setParameter('liip_search.controller.search_action', $controller);
         unset($config['clients']);
 
-        return $client;
+        if ($backend) {
+            $loader->load('backend_search.xml');
+        }
+        if ($frontend) {
+            $loader->load('frontend_search.xml');
+        }
+
+        return $factory;
     }
 }

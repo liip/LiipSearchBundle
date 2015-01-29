@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Liip/SearchBundle
+ * This file is part of the LiipSearchBundle
  *
  * (c) Liip AG
  *
@@ -37,25 +37,19 @@ class Configuration implements ConfigurationInterface
                 ->ifTrue(function ($v) {
                     return !$v['clients']['google_rest']['enabled']
                         && !$v['clients']['google_cse']['enabled']
-                        && empty($v['search_client']);
+                        && empty($v['search_factory']);
                 })
-                ->then(function ($v) {
+                ->then(function () {
                     throw new InvalidConfigurationException('You need to configure the google API client or specify a search_client service.');
                 })
             ->end()
             ->children()
-                ->scalarNode('search_client')->defaultNull()->end()
+                ->scalarNode('search_factory')->defaultNull()->end()
                 ->scalarNode('search_route')->defaultValue('liip_search')->end()
+                ->scalarNode('query_param_name')->defaultValue('query')->end()
+                ->scalarNode('page_param_name')->defaultValue('page')->end()
                 ->scalarNode('restrict_language')->defaultFalse()->end()
-                ->arrayNode('pager')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('results_per_page')->defaultValue(10)->end()
-                        ->scalarNode('max_head_items')->defaultValue(2)->end()
-                        ->scalarNode('max_tail_items')->defaultValue(2)->end()
-                        ->scalarNode('max_adjoining_items')->defaultValue(2)->end()
-                    ->end()
-                ->end()
+                ->scalarNode('max_per_page')->defaultValue(10)->end()
                 ->arrayNode('clients')
                     ->canBeUnset()
                     ->children()
@@ -65,9 +59,16 @@ class Configuration implements ConfigurationInterface
                             ->canBeEnabled()
                             ->children()
                                 ->scalarNode('api_key')->isRequired()->end()
-                                ->scalarNode('search_key')->isRequired()->end()
+                                ->arrayNode('search_key')
+                                    ->isRequired()
+                                    ->beforeNormalization()
+                                        ->ifTrue(function ($v) {return is_string($v);})
+                                        ->then(function ($v) {return array($v);})
+                                    ->end()
+                                    ->prototype('scalar')->end()
+                                ->end()
                                 ->scalarNode('search_api_url')->defaultValue('https://www.googleapis.com/customsearch/v1')->end()
-                                ->scalarNode('restrict_to_site')->defaultValue('')->end()
+                                ->scalarNode('restrict_to_site')->defaultFalse()->end()
                             ->end()
                         ->end()
                         ->arrayNode('google_cse')
