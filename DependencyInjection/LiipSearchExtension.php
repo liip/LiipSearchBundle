@@ -30,13 +30,16 @@ class LiipSearchExtension extends Extension
         $config = $this->processConfiguration(new Configuration(), $configs);
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('twig_extension.xml');
 
         $searchFactory = $this->loadSearchClients($container, $loader, $config);
 
-        $container->setAlias(
-            $this->getAlias().'.default_search_factory',
-            $searchFactory
-        );
+        if ($searchFactory) {
+            $container->setAlias(
+                $this->getAlias().'.default_search_factory',
+                $searchFactory
+            );
+        }
 
         foreach (array('search_route', 'restrict_language', 'max_per_page') as $key) {
             $container->setParameter($this->getAlias().'.'.$key, $config[$key]);
@@ -63,7 +66,7 @@ class LiipSearchExtension extends Extension
         $backend = empty($factory);
         $controller = 'liip_search.controller.paged_search:searchAction';
 
-        if ($config['clients']['google_rest']['enabled']) {
+        if (!empty($config['clients']['google_rest']['enabled'])) {
             foreach ($config['clients']['google_rest'] as $key => $value) {
                 $container->setParameter($this->getAlias().'.google_rest.'.$key, $value);
             }
@@ -73,7 +76,7 @@ class LiipSearchExtension extends Extension
                 $factory = 'liip_search.google_rest.factory';
             }
         }
-        if ($config['clients']['google_cse']['enabled']) {
+        if (!empty($config['clients']['google_cse']['enabled'])) {
             $container->setParameter($this->getAlias().'.controller.frontend_search', array(
                 'search_template' => 'LiipSearchBundle:google:search.html.twig',
                 'box_template' => 'LiipSearchBundle:google:search_box.html.twig',
@@ -81,6 +84,7 @@ class LiipSearchExtension extends Extension
                     'google_custom_search_id', $config['clients']['google_cse']['cse_id'],
                 ),
             ));
+
             $frontend = true;
             $loader->load('google_cse.xml');
             if (empty($factory)) {
@@ -88,8 +92,13 @@ class LiipSearchExtension extends Extension
                 $factory = 'liip_search.google_cse.factory';
             }
         }
-        $container->setParameter('liip_search.controller.search_action', $controller);
+
         unset($config['clients']);
+        $container->setParameter('liip_search.controller.search_action', $controller);
+
+        if (empty($factory)) {
+            return false;
+        }
 
         if ($backend) {
             $loader->load('backend_search.xml');

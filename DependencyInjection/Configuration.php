@@ -33,16 +33,6 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
         $treeBuilder->root('liip_search')
-            ->validate()
-                ->ifTrue(function ($v) {
-                    return !$v['clients']['google_rest']['enabled']
-                        && !$v['clients']['google_cse']['enabled']
-                        && empty($v['search_factory']);
-                })
-                ->then(function () {
-                    throw new InvalidConfigurationException('You need to configure the google API client or specify a search_client service.');
-                })
-            ->end()
             ->children()
                 ->scalarNode('search_factory')->defaultNull()->end()
                 ->scalarNode('search_route')->defaultValue('liip_search')->end()
