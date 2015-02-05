@@ -1,0 +1,24 @@
+{% block liip_search_content %}
+    {% block liip_search_title %}
+        <h1>{% trans from 'LiipSearchBundle' %}search{% endtrans %}</h1>
+    {% endblock %}
+
+    {% block liip_search_script %}
+        <script type="application/javascript">
+            (function() {
+                var cx = '{{ options.google_custom_search_id[app.request.locale]|default(options.google_custom_search_id|first) }}';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+                '//www.google.com/cse/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+            })();
+        </script>
+    {% endblock %}
+
+    {% block liip_search_results %}
+        <gcse:search queryParameterName="{{ query_param_name }}" noResultsString="{{ 'search_noresults'|trans({}, 'LiipSearchBundle')|escape('html') }}"></gcse:search>
+    {% endblock %}
+{% endblock %}

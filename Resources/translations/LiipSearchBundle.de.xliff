@@ -2,37 +2,29 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file source-language="en" datatype="plaintext" original="file.ext">
         <body>
-            <trans-unit id="1">
+            <trans-unit id="search_term">
                 <source>search_term</source>
                 <target>%count% Resultat &quot;%query%&quot; wurde gefunden.|%count% Resultate für &quot;%query%&quot; wurden gefunden.</target>
             </trans-unit>
-            <trans-unit id="2">
+            <trans-unit id="search_noresults">
                 <source>search_noresults</source>
                 <target>Es konnten keine Resultate gefunden werden.</target>
             </trans-unit>
-            <trans-unit id="3">
+            <trans-unit id="search_failure">
                 <source>search_failure</source>
                 <target>Die Suche ist momentan nicht verfügbar.</target>
             </trans-unit>
-            <trans-unit id="4">
+            <trans-unit id="search">
                 <source>search</source>
                 <target>Suchen</target>
             </trans-unit>
-            <trans-unit id="5">
-                <source>previous</source>
-                <target>Prev</target>
+            <trans-unit id="search_site">
+                <source>search_site</source>
+                <target>Durchsuche diese Webseite</target>
             </trans-unit>
-            <trans-unit id="6">
-                <source>next</source>
-                <target>Next</target>
-            </trans-unit>
-            <trans-unit id="7">
-                <source>Search this site</source>
-                <target>Suche</target>
-            </trans-unit>
-            <trans-unit id="8">
+            <trans-unit id="send">
                 <source>send</source>
-                <target>Senden</target>
+                <target>Suchen</target>
             </trans-unit>
         </body>
     </file>

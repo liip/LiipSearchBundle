@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Liip/SearchBundle
+ * This file is part of the LiipSearchBundle
  *
  * (c) Liip AG
  *

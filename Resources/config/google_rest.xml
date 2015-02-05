@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+
+        <service id="liip_search.google_rest.factory" class="Liip\SearchBundle\SearchClient\GoogleRestFactory">
+            <argument>%liip_search.google_rest.api_key%</argument>
+            <argument>%liip_search.google_rest.search_key%</argument>
+            <argument>%liip_search.google_rest.search_api_url%</argument>
+            <argument>%liip_search.max_per_page%</argument>
+            <argument>%liip_search.restrict_language%</argument>
+            <argument>%liip_search.google_rest.restrict_to_site%</argument>
+        </service>
+
+    </services>
+</container>

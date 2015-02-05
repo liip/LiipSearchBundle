@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Liip/SearchBundle
+ * This file is part of the LiipSearchBundle
  *
  * (c) Liip AG
  *
@@ -12,47 +12,71 @@
 namespace Liip\SearchBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\NodeInterface;
 
 /**
-* This class contains the configuration information for the bundle
-*
-* This information is solely responsible for how the different configuration
-* sections are normalized, and merged.
-*
-* @author David Buchmann
-*/
+ * This class contains the configuration information for the bundle
+ *
+ * This information is solely responsible for how the different configuration
+ * sections are normalized, and merged.
+ */
 class Configuration implements ConfigurationInterface
 {
     /**
      * Returns the config tree builder.
      *
-     * @return \Symfony\Component\DependencyInjection\Configuration\NodeInterface
+     * @return NodeInterface
      */
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
         $treeBuilder->root('liip_search')
             ->children()
-                ->arrayNode('google')
-                    ->addDefaultsIfNotSet()
-                    ->canBeUnset()
-                    ->children()
-                        ->scalarNode('search_key')->defaultFalse()->end()
-                        ->scalarNode('restrict_to_site')->defaultValue('')->end()
-                        ->scalarNode('restrict_to_labels')->defaultValue('')->end()
-                    ->end()
-                ->end()
+                ->scalarNode('search_factory')->defaultNull()->end()
                 ->scalarNode('search_route')->defaultValue('liip_search')->end()
-                ->scalarNode('pager_max_head_items')->defaultValue(2)->end()
-                ->scalarNode('pager_max_tail_items')->defaultValue(2)->end()
-                ->scalarNode('pager_max_adjoining_items')->defaultValue(2)->end()
-                ->scalarNode('results_per_page')->defaultValue(10)->end()
-                ->scalarNode('restrict_by_language')->defaultFalse()->end()
-                ->scalarNode('translation_domain')->defaultValue('LiipSearchBundle_search')->end()
                 ->scalarNode('query_param_name')->defaultValue('query')->end()
                 ->scalarNode('page_param_name')->defaultValue('page')->end()
+                ->scalarNode('restrict_language')->defaultFalse()->end()
+                ->scalarNode('max_per_page')->defaultValue(10)->end()
+                ->arrayNode('clients')
+                    ->canBeUnset()
+                    ->children()
+                        ->arrayNode('google_rest')
+                            ->addDefaultsIfNotSet()
+                            ->canBeUnset()
+                            ->canBeEnabled()
+                            ->children()
+                                ->scalarNode('api_key')->isRequired()->end()
+                                ->arrayNode('search_key')
+                                    ->isRequired()
+                                    ->beforeNormalization()
+                                        ->ifTrue(function ($v) {return is_string($v);})
+                                        ->then(function ($v) {return array($v);})
+                                    ->end()
+                                    ->prototype('scalar')->end()
+                                ->end()
+                                ->scalarNode('search_api_url')->defaultValue('https://www.googleapis.com/customsearch/v1')->end()
+                                ->scalarNode('restrict_to_site')->defaultFalse()->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('google_cse')
+                            ->addDefaultsIfNotSet()
+                            ->canBeUnset()
+                            ->canBeEnabled()
+                            ->children()
+                                ->arrayNode('cse_id')
+                                    ->isRequired()
+                                    ->beforeNormalization()
+                                        ->ifTrue(function ($v) {return is_string($v);})
+                                        ->then(function ($v) {return array($v);})
+                                    ->end()
+                                    ->prototype('scalar')->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
             ->end()
         ->end();
 

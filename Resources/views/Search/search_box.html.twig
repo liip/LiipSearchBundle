@@ -1,9 +1,5 @@
-{% set default_value %}
-{%trans from translationDomain %}search{% endtrans %}
-{% endset %}
-
-<form class="quick_search" action="{{ searchRoute }}">
-    <label for="{{ field_id|default('query') }}">{% trans from translationDomain %}Search this site{% endtrans %}</label>
-    <input type="text" class="query" id="{{ field_id|default('query') }}" name="{{ query_param_name }}" value="{{ searchTerm|default(default_value) }}" />
-    <input type="submit" class="button" value="{% trans from translationDomain %}send{% endtrans %}" />
+<form class="{{ css_class }}" action="{{ search_url }}">
+    <label for="{{ field_id|default('query') }}" class="search-label">{% trans from 'LiipSearchBundle' %}search_site{% endtrans %}</label>
+    <input type="text" class="search-input" id="{{ field_id|default('query') }}" name="{{ query_param_name }}" value="{{ query|default('') }}" />
+    <input type="submit" class="button search-button" value="{% trans from 'LiipSearchBundle' %}send{% endtrans %}" />
 </form>

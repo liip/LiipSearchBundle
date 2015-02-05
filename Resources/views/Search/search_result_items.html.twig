@@ -1,0 +1,16 @@
+<dl>
+    {% for result in search_results %}
+        <dt>
+            <a href="{{ result.url }}">{{ result.htmlTitle | raw}}</a>
+        </dt>
+        {% if result.thumbnail is defined and result.thumbnail %}
+            <dd class="search-results-thumbnail">
+                <img src="{{ result.thumbnail.src }}" alt="" />
+            </dd>
+        {% endif %}
+        <dd class="search-results-snippet">
+            {{ result.htmlSnippet | raw }}
+        </dd>
+        <dd class="search-results-url">{{ result.url }}</dd>
+    {% endfor %}
+</dl>

@@ -1,187 +1,189 @@
 LiipSearchBundle
 ================
 
-This bundle allows using the Google XML API for searching content contained
-in the site(s) that you have configured in a [Google site search](http://www.google.com/sitesearch/) service.
-
-Perhaps other search services will be added to this bundle in the future (solr, etc).
+This bundle provides a uniform interface for full text search with various 
+search engines and a controller with twig templates to render search forms and 
+results.
 
 Introduction
 ------------
-This search bundle allows you to add search to your site.  It uses the Google Websearch
-XML API as a backend service.
+
+This search bundle simplifies adding search to your site.
 
 Provided for you are:
 
-* A service which passes submitted queries on to google, and returns HTML results
-
+* A controller to render a search box and the search page with twig templates
+* A service to query google site search
 * A service which provides paging for the search results
 
-* A controller service which can be used to render a search box from a template
+### Built-in Search Engines Support
 
+For now, [Google site search](http://www.google.com/sitesearch/) is supported 
+out of the box. The implementation uses the Google REST API. You can 
+alternatively use the [Custom Search Engine](https://www.google.ch/cse) feature 
+that loads the search in the frontend.
 
-Configuration
--------------
-These parameters can be configured in your config.yml:
+Contributions for other services are welcome.
 
-* search_route
-  * default value: 'liip_search'
-  * This is the name of the route that will handle submitted search requests
+Installation
+------------
 
-* restrict_by_language
-  * default value: false
-  * Change this to true if you want to restrict the search to results that Google thinks are in the language specified by the session locale
+Install the bundle with `composer require liip/search-bundle`.
 
-* translation_domain
-  * default value: 'liip_search_bundle_search'
-  * Provides the name of the translation file to use.
+Include the bundle in app/Kernel.php.
 
-* results_per_page
-  * default value: 10
-  * How many search results to display per page
+Add your preferred search engine in app/config/config.yml:
 
-* pager_max_head_items
-  * default value: 2
-  * How many page links to always show at the beginning of the search results
-  * For example, with a value of 2, this always shows page 1 and 2
-  * 0 is an accepted value
+```yaml
+liip_search:
+    clients:
+        google_rest:
+            api_key: '%google.api_key%'
+            search_key: '%google.search_key%'
+```
 
-* pager_max_tail_items
-  * default value: 2
-  * How many page links to always show at the end of the search results
-  * For example, with a value of 2, this always shows page n-1 and n, where n is the last page of results
-  * 0 is an accepted value
+Or if you use the javascript Google custom search engine:
 
-* pager_max_adjoining_items
-  * default value: 2
-  * How many page links to always show before and after the current page
-  * For example, with a value of 2, on page 6 of the results, it would show <extremity pages> ... 4 5 *6* 7 8 ... <extremity pages>
-
-* query_param_name
-  * default value: 'query'
-  * The key string used for submitting the search term (e.g. /search?*q*=software)
-
-* page_param_name
-  * default value: 'page'
-  * The key string used for submitting the page number (e.g. /search?q=software&*p*=3)
-
-* google
-  * Enables the google search service
-
-    * search_key
-    * default value: false
-    * The Google search api key (https://code.google.com/apis/console)
-
-    * restrict_to_site
-      * default value: ''
-      * example value: 'www.example.com'
-      * With the default, empty value, all sites configured in the site search account will be searched
-      * You may specify a site here to restrict the search to, if you have configured several sites to search in your site search account
-
-    * restrict_to_labels
-      * default value: ''
-      * example value: ['onions', 'potatoes']
-      * With the default, empty value, no label is used to refine the search
-      * You may specify one or more labels to restrict the search to, if you have configured labels in your site search account
+```yaml
+liip_search:
+    clients:
+        google_cse:
+            cse_id: '%google.search_key%'
+```
 
 Usage
 -----
-Include the bundle in your app/autoload.php and app/Kernel.php.
 
-You can include the default search box by rendering the showSearchBox action of the default search controller:
-
-``` jinja
-{{ render(controller('liip_search_default_controller:showSearchBoxAction', {'field_id':'query', 'query':'last_query'})) }}
-```
-
-Or if you are on an old Symfony version that does not support this construct, you do:
+You can display a search box anywhere on the page with the liip_search_box twig function:
 
 ``` jinja
-{% render 'liip_search_default_controller:showSearchBoxAction' with {'field_id':'query', 'query':'last_query'} %}
+{{ liip_search_box(query, 'query-field-id', 'css-class') }}
 ```
 
-The parameters you must pass are:
+You can customize the search box with these parameters:
 
-* field_id - The ID of the html text field for the search. This parameter allows you to have more than one search box in a single page
-* query - [optional] Allows you to specify the last searched term with which the search input field will be populated
+* query - default query to display
+* fieldId - HTML id to use for the search input field. Use different ids when 
+  having more than one search box on your page, e.g. in the header and in content.
+* cssClass - A css class to apply to the whole search box `<form>`.
 
+Create a route for the search action. The easiest is to just use the provided 
+routing.xml from your main project routing.xml:
 
-Create a route for the search action. The easiest is to just use the provided routing.yml from your main project routing.yml
-
-``` yaml
-liip_search:
-    resource: "@LiipSearchBundle/Resources/config/routing.yml"
+```
+    liip_search:
+        resource: "@LiipSearchBundle/Resources/config/routing.xml"
 ```
 
-It defaults to the route /search . If you want a different route, you can either
-use the liip_search.google:search action as the controller for that route or define
-your own controller action, do whatever you need to do and then use the services
-provided by this bundle.
+It defaults to the URL `/search`. If you want a different route, use the `prefix` 
+option when including the route or configure your own route using 
+`%liip_search.controller.search_action%` as default value for `_controller`.
 
-If you define you own action, you'll need to provide the query and page parameters when
-rendering the liip_search.google search action from the twig template.
-Your custom search action method might look like this:
+### Customizing Templating
 
-``` php
-use Liip\SearchBundle\Helper\SearchParams;
-...
-public function searchAction()
-{
-    return $this->render('MyBundle:Search:search.html.twig',
-            array(
-                'title' => 'Search'
-                'query' => SearchParams::requestedQuery($request, $queryParamName),
-                'page'  => SearchParams::requestedPage($request, $pageParamName),
-            ));
-}
-```
+The search result templates provided by this bundle extend the
+`LiipSearchBundle::layout.html.twig` template. To integrate with the rest of your
+site, you have two options:
 
-Where MyBundle:Search:search.html.twig renders the liip_search.google search action:
+* Create `app/Resources/LiipSearchBundle/views/layout.html.twig` and make it
+  extend your base layout, putting a ``liip_search_content`` block where you
+  want the search results.
+* Create `app/Resources/LiipSearchBundle/views/Search/search.html.twig` and
+  build your own templating structure - you should be able to `use` the
+  `search_results.twig.html` template to get the `liip_search_content` block.
 
-``` jinja
-{{ render(controller("liip_search.google:searchAction", {'query': query, 'page': page})) }}
-```
+Of course you can also override any of the templates to customize what they
+should do. See
+http://symfony.com/doc/master/book/templating.html#overriding-bundle-templates
 
-When rendering from a template like this, the query and page parameters must be provided.
-When rendered from a template, a subrequest is used, and liip_search.google:searchAction
-will not have access to the original Request object, and so cannot read the query and
-page parameters from the Request.
+Configuration Reference
+-----------------------
 
+This is the full reference of what you can configure under the ``liip_search`` key:
 
-If, on the other hand, you choose to use the liip_search.google:search action, your route
-will look something like this:
+``search_factory``
 
-``` yaml
-search:
-    pattern: /search
-    defaults: { _controller: liip_search.google:search }
-```
+**string**, default value: null
 
-If you're doing this, you'll want to override the templates so that you can include your
-site-specific layout.
+Specify a custom service that implements the `Liip\SearchBundle\SearchFactoryInterface`. 
+This service will be used by the controller to create `Pagerfanta` instances to handle
+the search.
 
-Overriding the templates
-------------------------
+If you configure one of the search engine services, you do not need to set this 
+field.
 
-The templates used by the bundle can be overridden by the normal Symfony2 mechanism to replace predefined
-templates.
+``search_route``
 
-Your version of the templates must go into app/Resources.
+**string**, default value: liip_search
 
-See http://symfony.com/doc/master/book/templating.html#overriding-bundle-templates
+The name of the route that will handle submitted search requests.
 
-Overriding the translations
----------------------------
+``restrict_language``
 
-The translations used by the bundle can be overridden by creating an XLIFF file with the correct translations
-key and then setting the liip_search.translation_domain to the name of your translation file.
+**boolean**, default value: false
+  
+Change this to true if you want to ask the search service to restrict the
+results to the language of the request.
+
+### Google Search REST API Integration
+
+Configuring any of these options enables the google search engine service. They 
+are located under ``clients.google_rest``.
+
+``api_key``
+
+**string**, required
+
+Your [Google API key](https://code.google.com/apis/console)
+
+``search_key``
+
+**string|array**, required
+
+The key identifying your [Google Search Engine](https://www.google.com/cse).
+May be a list of keys indexed by locale to use different engines per locale.
+If you control locales through separate search engines, you do not need to set
+`restrict_language` to true unless you want your custom search engines to 
+receive a language restriction additionally.
+
+``api_url``
+
+**string**, default value: https://www.googleapis.com/customsearch/v1
+
+The Google Search API URL for REST calls
+   
+``restrict_to_site``
+
+**string**, default value: null
+
+If left empty, all sites configured for the google search engines are searched.
+Set to a a domain to limit to that domain.
+
+### Google Custom Search Engine Integration
+
+Configuring this section activates a different controller that renders the
+Javascript fragment to enable the CSE search. This configuration is located
+under ``clients.google_cse``.
+
+``cse_id``
+
+**string|array**, required
+
+The key identifying your [Google Custom Search Engine](https://www.google.com/cse).
+May be a list of keys indexed by locale to use different engines per locale.
+CSE does *not* support the `restrict_language`, so different search engines per
+language are your only option to restrict the language of search results.
+
+Adding your own Search Service
+------------------------------
+
+Implement the `Liip\SearchBundle\SearchInterface` and configure it as a service.
+Then set `liip_search.search_client` to that service name.
 
 TODO
 ----
-### for the google search service
-* add support for Refinements
-* add support for Synonyms
-* expose more of the google search parameters
 
-### in general
-* provide interfaces for services and any other pluggable classes
+* Use guzzle to talk to google REST API
+* Add support for refinements (more like this) with info in search result array 
+  that can be passed to SearchInterface::refineSearch
+* Expose more of the google search parameters
