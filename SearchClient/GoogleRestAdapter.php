@@ -12,8 +12,6 @@
 namespace Liip\SearchBundle\SearchClient;
 
 use Liip\SearchBundle\Exception\SearchException;
-use Liip\SearchBundle\SearchFactoryInterface;
-use Liip\SearchBundle\SearchInterface;
 use Pagerfanta\Adapter\AdapterInterface;
 
 /**
@@ -119,8 +117,8 @@ class GoogleRestAdapter implements AdapterInterface
     /**
      * Builds request URL for google search REST API
      *
-     * @param int            $start item number to start with (first item is item 1)
-     * @param int            $limit how many results at most to return (valid values: 1 to 10)
+     * @param int $start item number to start with (first item is item 1)
+     * @param int $limit how many results at most to return (valid values: 1 to 10)
      *
      * @return array of search result information and items
      *

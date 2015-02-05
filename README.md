@@ -42,6 +42,15 @@ liip_search:
             search_key: '%google.search_key%'
 ```
 
+Or if you use the javascript Google custom search engine:
+
+```yaml
+liip_search:
+    clients:
+        google_cse:
+            cse_id: '%google.search_key%'
+```
+
 Usage
 -----
 
@@ -72,13 +81,20 @@ option when including the route or configure your own route using
 
 ### Customizing Templating
 
-The templates provided by this bundle base on the 
-LiipSearchBundle::layout.html.twig template. To integrate with the rest of your
-site, override the layout.html.twig template in app/Resources and provide an empty
-``liip_search_content`` block.
+The search result templates provided by this bundle extend the
+`LiipSearchBundle::layout.html.twig` template. To integrate with the rest of your
+site, you have two options:
 
-Of course you can also override any of the templates.
-See http://symfony.com/doc/master/book/templating.html#overriding-bundle-templates
+* Create `app/Resources/LiipSearchBundle/views/layout.html.twig` and make it
+  extend your base layout, putting a ``liip_search_content`` block where you
+  want the search results.
+* Create `app/Resources/LiipSearchBundle/views/Search/search.html.twig` and
+  build your own templating structure - you should be able to `use` the
+  `search_results.twig.html` template to get the `liip_search_content` block.
+
+Of course you can also override any of the templates to customize what they
+should do. See
+http://symfony.com/doc/master/book/templating.html#overriding-bundle-templates
 
 Configuration Reference
 -----------------------
@@ -109,7 +125,7 @@ The name of the route that will handle submitted search requests.
 Change this to true if you want to ask the search service to restrict the
 results to the language of the request.
 
-### Google Search Engine Integration
+### Google Search REST API Integration
 
 Configuring any of these options enables the google search engine service. They 
 are located under ``clients.google_rest``.
@@ -143,6 +159,21 @@ The Google Search API URL for REST calls
 If left empty, all sites configured for the google search engines are searched.
 Set to a a domain to limit to that domain.
 
+### Google Custom Search Engine Integration
+
+Configuring this section activates a different controller that renders the
+Javascript fragment to enable the CSE search. This configuration is located
+under ``clients.google_cse``.
+
+``cse_id``
+
+**string|array**, required
+
+The key identifying your [Google Custom Search Engine](https://www.google.com/cse).
+May be a list of keys indexed by locale to use different engines per locale.
+CSE does *not* support the `restrict_language`, so different search engines per
+language are your only option to restrict the language of search results.
+
 Adding your own Search Service
 ------------------------------
 
@@ -152,10 +183,7 @@ Then set `liip_search.search_client` to that service name.
 TODO
 ----
 
-* Use PagerFanta instead of custom pager
 * Use guzzle to talk to google REST API
 * Add support for refinements (more like this) with info in search result array 
   that can be passed to SearchInterface::refineSearch
-* Adapters for other search systems.
 * Expose more of the google search parameters
-* Exctract google REST API client to a library or find an existing client implementation.

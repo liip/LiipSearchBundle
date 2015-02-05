@@ -11,9 +11,7 @@
 
 namespace Liip\SearchBundle\SearchClient;
 
-use Liip\SearchBundle\Exception\SearchException;
 use Liip\SearchBundle\SearchFactoryInterface;
-use Liip\SearchBundle\SearchInterface;
 use Pagerfanta\Pagerfanta;
 
 /**

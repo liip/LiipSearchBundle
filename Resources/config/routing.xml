@@ -9,4 +9,3 @@
         <default key="_controller">%liip_search.controller.search_action%</default>
     </route>
 </routes>
-

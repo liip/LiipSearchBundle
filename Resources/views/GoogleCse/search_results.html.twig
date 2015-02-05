@@ -3,10 +3,10 @@
         <h1>{% trans from 'LiipSearchBundle' %}search{% endtrans %}</h1>
     {% endblock %}
 
-    {% block liip_search_results %}
+    {% block liip_search_script %}
         <script type="application/javascript">
             (function() {
-                var cx = '{{ google_custom_search_id }}';
+                var cx = '{{ options.google_custom_search_id[app.request.locale]|default(options.google_custom_search_id|first) }}';
                 var gcse = document.createElement('script');
                 gcse.type = 'text/javascript';
                 gcse.async = true;
@@ -16,7 +16,9 @@
                 s.parentNode.insertBefore(gcse, s);
             })();
         </script>
+    {% endblock %}
 
-        <gcse:search noResultsString="{{ 'search_noresults'|trans({}, 'LiipSearchBundle')|escape('html') }}"></gcse:search>
+    {% block liip_search_results %}
+        <gcse:search queryParameterName="{{ query_param_name }}" noResultsString="{{ 'search_noresults'|trans({}, 'LiipSearchBundle')|escape('html') }}"></gcse:search>
     {% endblock %}
 {% endblock %}

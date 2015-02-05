@@ -13,7 +13,6 @@ namespace Liip\SearchBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
 
@@ -77,24 +76,26 @@ class LiipSearchExtension extends Extension
             }
         }
         if (!empty($config['clients']['google_cse']['enabled'])) {
-            $container->setParameter($this->getAlias().'.controller.frontend_search', array(
-                'search_template' => 'LiipSearchBundle:google:search.html.twig',
-                'box_template' => 'LiipSearchBundle:google:search_box.html.twig',
+            $container->setParameter($this->getAlias().'.controller.frontend_search_options', array(
+                'search_template' => 'LiipSearchBundle:GoogleCse:search.html.twig',
+                'query_param_name' => $config['query_param_name'],
                 'template_options' => array(
-                    'google_custom_search_id', $config['clients']['google_cse']['cse_id'],
+                    'google_custom_search_id' => $config['clients']['google_cse']['cse_id'],
                 ),
             ));
 
             $frontend = true;
-            $loader->load('google_cse.xml');
             if (empty($factory)) {
                 $controller = 'liip_search.controller.frontend_search:searchAction';
-                $factory = 'liip_search.google_cse.factory';
             }
         }
 
         unset($config['clients']);
         $container->setParameter('liip_search.controller.search_action', $controller);
+
+        if ($frontend) {
+            $loader->load('frontend_search.xml');
+        }
 
         if (empty($factory)) {
             return false;
@@ -102,9 +103,6 @@ class LiipSearchExtension extends Extension
 
         if ($backend) {
             $loader->load('backend_search.xml');
-        }
-        if ($frontend) {
-            $loader->load('frontend_search.xml');
         }
 
         return $factory;

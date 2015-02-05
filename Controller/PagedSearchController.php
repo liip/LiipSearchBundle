@@ -12,8 +12,6 @@
 namespace Liip\SearchBundle\Controller;
 
 use Liip\SearchBundle\SearchFactoryInterface;
-use Liip\SearchBundle\SearchInterface;
-use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;

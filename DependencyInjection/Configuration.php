@@ -13,7 +13,6 @@ namespace Liip\SearchBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\NodeInterface;
 
 /**
@@ -66,8 +65,16 @@ class Configuration implements ConfigurationInterface
                             ->canBeUnset()
                             ->canBeEnabled()
                             ->children()
-                                ->scalarNode('cse_id')->isRequired()->end()
+                                ->arrayNode('cse_id')
+                                    ->isRequired()
+                                    ->beforeNormalization()
+                                        ->ifTrue(function ($v) {return is_string($v);})
+                                        ->then(function ($v) {return array($v);})
+                                    ->end()
+                                    ->prototype('scalar')->end()
+                                ->end()
                             ->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end()

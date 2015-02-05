@@ -11,9 +11,6 @@
 
 namespace Liip\SearchBundle\Controller;
 
-use Liip\SearchBundle\SearchFactoryInterface;
-use Liip\SearchBundle\SearchInterface;
-use Pagerfanta\Pagerfanta;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
@@ -51,6 +48,7 @@ class FrontendSearchController
         $this->templating = $templating;
         $optionsResolver = new OptionsResolver();
         $optionsResolver->setRequired(array(
+            'query_param_name',
             'search_template',
         ));
         $optionsResolver->setDefaults(array(
@@ -71,6 +69,7 @@ class FrontendSearchController
         return new Response($this->templating->render(
             $this->options['search_template'],
             array(
+                'query_param_name' => $this->options['query_param_name'],
                 'options' => $this->options['template_options'],
             )
         ));
