@@ -1,9 +1,16 @@
 LiipSearchBundle
 ================
 
+[![Latest Stable Version](https://poser.pugx.org/liip/search-bundle/v/stable.svg)](https://packagist.org/packages/liip/search-bundle)
+[![Latest Unstable Version](https://poser.pugx.org/liip/search-bundle/v/unstable.svg)](https://packagist.org/packages/liip/search-bundle)
+[![Total Downloads](https://poser.pugx.org/liip/search-bundle/d/total.png)](https://packagist.org/packages/liip/search-bundle)
+
 This bundle provides a uniform interface for full text search with various 
 search engines and a controller with twig templates to render search forms and 
 results.
+
+Note: You are looking at Version 2 of this bundle, which saw large changes
+compared to [Version 1](https://github.com/liip/LiipSearchBundle/tree/1.0).
 
 Introduction
 ------------
