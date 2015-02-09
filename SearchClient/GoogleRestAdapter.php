@@ -195,8 +195,11 @@ class GoogleRestAdapter implements AdapterInterface
         $baseIndex = $metaInformation['startIndex'];
 
         $results = array();
-        foreach ($data['items'] as $index => $resultItem) {
-            $results[] = $this->extractSearchResultItem($resultItem, $index + $baseIndex);
+
+        if (isset($data['items'])) {
+            foreach ($data['items'] as $index => $resultItem) {
+                $results[] = $this->extractSearchResultItem($resultItem, $index + $baseIndex);
+            }
         }
 
         return $results;
