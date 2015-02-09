@@ -21,7 +21,7 @@
             {% endblock %}
 
             {% block liip_search_results_footer %}
-                {% if pager is defined %}
+                {% if estimated %}
                     <div class="pager">
                         {{ pagerfanta(pager) }}
                     </div>
