@@ -26,9 +26,10 @@ Provided for you are:
 ### Built-in Search Engines Support
 
 For now, [Google site search](http://www.google.com/sitesearch/) is supported 
-out of the box. The implementation uses the Google REST API. You can 
-alternatively use the [Custom Search Engine](https://www.google.ch/cse) feature 
-that loads the search in the frontend.
+out of the box. There is one implementation using the
+[Google REST API](https://developers.google.com/custom-search/json-api/v1/overview)
+and one implementation using the [Custom Search Element](https://developers.google.com/custom-search/docs/element)
+feature that loads the search with only javascript in the frontend.
 
 Contributions for other services are welcome.
 
@@ -180,6 +181,18 @@ The key identifying your [Google Custom Search Engine](https://www.google.com/cs
 May be a list of keys indexed by locale to use different engines per locale.
 CSE does *not* support the `restrict_language`, so different search engines per
 language are your only option to restrict the language of search results.
+
+Troubleshooting
+---------------
+
+### Google Custom Search Engine
+
+If you get `SearchException` saying "Empty response received from Google Search
+Engine API", try copying the URL that is output into a browser. You should get
+JSON response, but likely it will haves an error status.
+
+If you get a status 500 with an empty message, chances are that you need to
+renew the search engine in the [Google admin panel](https://www.google.com/cse/all).
 
 Adding your own Search Service
 ------------------------------

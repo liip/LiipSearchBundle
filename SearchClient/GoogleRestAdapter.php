@@ -89,7 +89,7 @@ class GoogleRestAdapter implements AdapterInterface
         }
 
         if ($json === false || is_null($json)) {
-            throw new SearchException('Empty response received from Google Search Engine API');
+            throw new SearchException('Empty response received from Google Search Engine API with query ' . $url);
         }
 
         // Decoding JSON data as associative Array
