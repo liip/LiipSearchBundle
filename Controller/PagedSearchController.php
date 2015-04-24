@@ -88,6 +88,7 @@ class PagedSearchController
                     'query' => '',
                     'search_results' => array(),
                     'options' => $this->options['template_options'],
+                    'estimated' => 0
                 )
             ));
         }
