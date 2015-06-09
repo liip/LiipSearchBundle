@@ -11,8 +11,7 @@
             {% include 'LiipSearchBundle:Search:search_results.html.twig' with {'searchResults':searchResults, 'query':searchTerm} %}
             {% if showPaging  %}
                 <div class="pager">
-                    {# # TODO: change to render(controller(... when we drop symfony 2.1 support #}
-                    {% render url('liip_search_paging', {'estimated': estimated, 'start': start, 'perPage': perPage, 'query': searchTerm, 'translationDomain': translationDomain}) %}
+                    {% render(controller('liip_search_default_controller:showPagingAction', {'estimated': estimated, 'start': start, 'perPage': perPage, 'query': searchTerm, 'translationDomain': translationDomain})) %}
                 </div>
             {% endif %}
         </div>

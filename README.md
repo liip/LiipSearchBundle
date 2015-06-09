@@ -153,7 +153,7 @@ will look something like this:
 
 ``` yaml
 search:
-    pattern: /search
+    path: /search
     defaults: { _controller: liip_search.google:search }
 ```
 

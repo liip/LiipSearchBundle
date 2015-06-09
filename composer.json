@@ -16,7 +16,7 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "symfony/framework-bundle": "~2.1"
+        "symfony/framework-bundle": "~2.3"
     },
     "autoload": {
         "psr-0": {
@@ -26,7 +26,7 @@
     "target-dir" : "Liip/SearchBundle",
         "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.1-dev"
         }
     }
 }
