@@ -46,22 +46,22 @@ class GoogleRestFactory implements SearchFactoryInterface
     private $maxPerPage;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $restrictLanguage;
 
     /**
-     * @var string|boolean
+     * @var string|bool
      */
     private $restrictToSite;
 
     /**
-     * @param string         $apiKey           Key for Google Project
-     * @param array          $searchKeys       Google search engine key or list indexed by locale
-     * @param string         $apiUrl           REST API endpoint
-     * @param int            $maxPerPage       Limit for results on a page.
-     * @param string|boolean $restrictLanguage Limit search results to requested language
-     * @param string|boolean $restrictToSite   If search results should be restricted to one site, specify the site
+     * @param string      $apiKey           Key for Google Project
+     * @param array       $searchKeys       Google search engine key or list indexed by locale
+     * @param string      $apiUrl           REST API endpoint
+     * @param int         $maxPerPage       Limit for results on a page.
+     * @param string|bool $restrictLanguage Limit search results to requested language
+     * @param string|bool $restrictToSite   If search results should be restricted to one site, specify the site
      */
     public function __construct($apiKey, $searchKeys, $apiUrl, $maxPerPage = 10, $restrictLanguage = false, $restrictToSite = false)
     {
@@ -76,7 +76,7 @@ class GoogleRestFactory implements SearchFactoryInterface
     /**
      * Get search results from Google.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getPagerfanta($query, $locale)
     {

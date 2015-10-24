@@ -32,7 +32,7 @@ class FrontendSearchController
     private $options;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * Supported options are:
      *     - search_template   Template for the search page
@@ -58,7 +58,7 @@ class FrontendSearchController
     }
 
     /**
-     * Search method
+     * Search method.
      *
      * @param Request $request Current request to fetch info from.
      *

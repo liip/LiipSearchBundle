@@ -16,7 +16,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\NodeInterface;
 
 /**
- * This class contains the configuration information for the bundle
+ * This class contains the configuration information for the bundle.
  *
  * This information is solely responsible for how the different configuration
  * sections are normalized, and merged.
