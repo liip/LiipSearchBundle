@@ -74,10 +74,10 @@ class SearchboxExtension extends \Twig_Extension
     /**
      * Renders the search box.
      *
-     * @param string|boolean $query    Default search query to show in the box.
-     * @param string         $fieldId  HTML id of the search input field, when you have
-     *                                 more than one search box on the page.
-     * @param string         $cssClass The css class to apply to the whole form.
+     * @param string|bool $query    Default search query to show in the box.
+     * @param string      $fieldId  HTML id of the search input field, when you have
+     *                              more than one search box on the page.
+     * @param string      $cssClass The css class to apply to the whole form.
      *
      * @return string The rendered search box.
      */

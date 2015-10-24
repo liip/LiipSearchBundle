@@ -45,22 +45,22 @@ class GoogleRestAdapter implements AdapterInterface
     private $lang;
 
     /**
-     * @var string|boolean
+     * @var string|bool
      */
     private $restrictToSite;
 
     /**
-     * @var boolean Number of results found.
+     * @var bool Number of results found.
      */
     private $totalResults = false;
 
     /**
-     * @param string         $apiKey         Key for Google Project
-     * @param string         $searchKey      Key for cse search service
-     * @param string         $apiUrl         REST API endpoint
-     * @param string         $query          The search query to use.
-     * @param string         $lang           The language to restrict to, or false to not limit.
-     * @param string|boolean $restrictToSite If search results should be restricted to one site, specify the site
+     * @param string      $apiKey         Key for Google Project
+     * @param string      $searchKey      Key for cse search service
+     * @param string      $apiUrl         REST API endpoint
+     * @param string      $query          The search query to use.
+     * @param string      $lang           The language to restrict to, or false to not limit.
+     * @param string|bool $restrictToSite If search results should be restricted to one site, specify the site
      */
     public function __construct($apiKey, $searchKey, $apiUrl, $query, $lang, $restrictToSite = false)
     {
@@ -75,11 +75,11 @@ class GoogleRestAdapter implements AdapterInterface
     /**
      * Get search results from Google.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getSlice($offset, $length)
     {
-        $offset++; // this seems 0 based, google is 1 based
+        ++$offset; // this seems 0 based, google is 1 based
         $url = $this->buildRequestUrl($offset, $length);
         try {
             $json = @file_get_contents($url);
@@ -89,7 +89,7 @@ class GoogleRestAdapter implements AdapterInterface
         }
 
         if ($json === false || is_null($json)) {
-            throw new SearchException('Empty response received from Google Search Engine API with query ' . $url);
+            throw new SearchException('Empty response received from Google Search Engine API with query '.$url);
         }
 
         // Decoding JSON data as associative Array
@@ -103,7 +103,7 @@ class GoogleRestAdapter implements AdapterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getNbResults()
     {
@@ -115,7 +115,7 @@ class GoogleRestAdapter implements AdapterInterface
     }
 
     /**
-     * Builds request URL for google search REST API
+     * Builds request URL for google search REST API.
      *
      * @param int $start item number to start with (first item is item 1)
      * @param int $limit how many results at most to return (valid values: 1 to 10)
@@ -137,7 +137,7 @@ class GoogleRestAdapter implements AdapterInterface
 
         if ($this->lang !== false) {
             $params['lr'] = 'lang_'.$this->lang; // Restricts the search to documents written in a particular language
-            $params['hl'] =  $this->lang;        // Sets the user interface language. Google recommends explicitly
+            $params['hl'] = $this->lang;        // Sets the user interface language. Google recommends explicitly
                                                  //   setting also for xml queries
         }
 
@@ -156,7 +156,7 @@ class GoogleRestAdapter implements AdapterInterface
 
     /**
      * Encode a string to be passed to the google search service
-     * See http://www.google.com/cse/docs/resultsxml.html#urlEscaping
+     * See http://www.google.com/cse/docs/resultsxml.html#urlEscaping.
      *
      * @param string string raw, non-encoded string
      *
@@ -176,7 +176,7 @@ class GoogleRestAdapter implements AdapterInterface
     }
 
     /**
-     * Extract the search results from the Google search response
+     * Extract the search results from the Google search response.
      *
      * @param array $data Raw google REST API result.
      *
@@ -236,7 +236,7 @@ class GoogleRestAdapter implements AdapterInterface
     }
 
     /**
-     * Gets paging information
+     * Gets paging information.
      *
      * @param array $data Raw google REST API result.
      *

@@ -38,7 +38,7 @@ class PagedSearchController
     private $options;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * Supported options are:
      *     - query_param_name* Name of the URL GET parameter for the query.
@@ -70,7 +70,7 @@ class PagedSearchController
     }
 
     /**
-     * Search method
+     * Search method.
      *
      * @param Request $request Current request to fetch info from.
      *
@@ -88,7 +88,7 @@ class PagedSearchController
                     'query' => '',
                     'search_results' => array(),
                     'options' => $this->options['template_options'],
-                    'estimated' => 0
+                    'estimated' => 0,
                 )
             ));
         }
