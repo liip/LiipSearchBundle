@@ -15,8 +15,8 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3",
-        "symfony/framework-bundle": "~2.3",
+        "php": "^5.3.9|^7.0",
+        "symfony/framework-bundle": "~2.3|~3.0",
         "white-october/pagerfanta-bundle": "~1.0"
     },
     "autoload": {
