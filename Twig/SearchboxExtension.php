@@ -67,7 +67,7 @@ class SearchboxExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'liip_search_box' => new \Twig_Function_Method($this, 'renderSearchBox', array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('liip_search_box', array($this, 'renderSearchBox'), array('is_safe' => array('html'))),
         );
     }
 

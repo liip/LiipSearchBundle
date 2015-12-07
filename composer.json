@@ -19,6 +19,9 @@
         "symfony/framework-bundle": "~2.3|~3.0",
         "white-october/pagerfanta-bundle": "~1.0"
     },
+    "conflict": {
+        "twig/twig": "<1.12"
+    },
     "autoload": {
         "psr-4": {
             "Liip\\SearchBundle\\": ""
