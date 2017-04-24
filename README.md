@@ -59,6 +59,15 @@ liip_search:
             cse_id: '%google.search_key%'
 ```
 
+Or if you use the bing web search API
+
+```yaml
+liip_search:
+    clients:
+        bing_web_search:
+            api_key: '%bing.api_key%'
+```
+
 Usage
 -----
 

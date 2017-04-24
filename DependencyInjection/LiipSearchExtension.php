@@ -89,6 +89,16 @@ class LiipSearchExtension extends Extension
                 $controller = 'liip_search.controller.frontend_search:searchAction';
             }
         }
+        if (!empty($config['clients']['bing_web_search']['enabled'])) {
+            foreach ($config['clients']['bing_web_search'] as $key => $value) {
+                $container->setParameter($this->getAlias().'.bing_web_search.'.$key, $value);
+            }
+            $backend = true;
+            $loader->load('bing_web_search.xml');
+            if (empty($factory)) {
+                $factory = 'liip_search.bing_web_search.factory';
+            }
+        }
 
         unset($config['clients']);
         $container->setParameter('liip_search.controller.search_action', $controller);
