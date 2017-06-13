@@ -243,7 +243,7 @@ class BingWebSearchAdapter implements AdapterInterface
     }
 
     /**
-     * Bing web search doesnt provide an html snippet with search terms highlighted
+     * Bing web search doesn't provide an html snippet with search terms highlighted
      * This method wraps b tags around any of the words from the query
      * 
      * @param string $text 
@@ -251,12 +251,20 @@ class BingWebSearchAdapter implements AdapterInterface
      */
     private function highlightKeywords($text)
     {
-        $words = explode(' ', htmlspecialchars($this->query));
+        $phrases = preg_split(
+            "/[\s,]*\\\"([^\\\"]+)\\\"[\s,]*|" . "[\s,]*'([^']+)'[\s,]*|" . "[\s,]+/",
+            htmlspecialchars($this->query, ENT_NOQUOTES),
+            0,
+            PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE
+        );
 
         $highlightedText = $text;
-        foreach ($words as $word) {
+        foreach ($phrases as $phrase) {
+            if (preg_match("/[^ A-Z0-9_\\-\\']/i", $phrase)) {
+                continue;
+            }
             $highlightedText = preg_replace(
-                '/'.preg_quote($word).'/i',
+                '/'.preg_quote($phrase).'/i',
                 '<b>$0</b>',
                 $highlightedText
             );
