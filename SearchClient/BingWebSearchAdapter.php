@@ -253,7 +253,7 @@ class BingWebSearchAdapter implements AdapterInterface
     {
         $phrases = preg_split(
             "/\s*\\\"([^\\\"]+)\\\"\s*|\s+/",
-            htmlspecialchars($this->query, ENT_NOQUOTES),
+            $this->query,
             0,
             PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE
         );
