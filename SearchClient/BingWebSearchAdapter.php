@@ -252,7 +252,7 @@ class BingWebSearchAdapter implements AdapterInterface
     private function highlightKeywords($text)
     {
         $phrases = preg_split(
-            "/[\s,]*\\\"([^\\\"]+)\\\"[\s,]*|" . "[\s,]*'([^']+)'[\s,]*|" . "[\s,]+/",
+            "/\s*\\\"([^\\\"]+)\\\"\s*|\s+/",
             htmlspecialchars($this->query, ENT_NOQUOTES),
             0,
             PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE
