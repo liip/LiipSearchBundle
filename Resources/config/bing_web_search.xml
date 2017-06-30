@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+
+        <service id="liip_search.bing_web_search.factory" class="Liip\SearchBundle\SearchClient\BingWebSearchFactory">
+            <argument>%liip_search.bing_web_search.api_key%</argument>
+            <argument>%liip_search.bing_web_search.search_api_url%</argument>
+            <argument>%liip_search.max_per_page%</argument>
+            <argument>%liip_search.bing_web_search.restrict_to_sites%</argument>
+        </service>
+
+    </services>
+</container>
