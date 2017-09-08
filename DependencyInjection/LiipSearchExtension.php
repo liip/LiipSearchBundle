@@ -47,6 +47,7 @@ class LiipSearchExtension extends Extension
         $controllerOptions = array(
             'query_param_name' => $config['query_param_name'],
             'page_param_name' => $config['page_param_name'],
+            'search_template' => empty($config['search_template']) ? 'LiipSearchBundle:Search:search.html.twig' : $config['search_template'],
         );
         $container->setParameter($this->getAlias().'.controller.paged_search_options', $controllerOptions);
 
@@ -77,7 +78,7 @@ class LiipSearchExtension extends Extension
         }
         if (!empty($config['clients']['google_cse']['enabled'])) {
             $container->setParameter($this->getAlias().'.controller.frontend_search_options', array(
-                'search_template' => 'LiipSearchBundle:GoogleCse:search.html.twig',
+                'search_template' => empty($config['search_template']) ? 'LiipSearchBundle:GoogleCse:search.html.twig' : $config['search_template'],
                 'query_param_name' => $config['query_param_name'],
                 'template_options' => array(
                     'google_custom_search_id' => $config['clients']['google_cse']['cse_id'],

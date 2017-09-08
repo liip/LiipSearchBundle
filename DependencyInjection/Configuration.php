@@ -39,6 +39,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('page_param_name')->defaultValue('page')->end()
                 ->scalarNode('restrict_language')->defaultFalse()->end()
                 ->scalarNode('max_per_page')->defaultValue(10)->end()
+                ->scalarNode('search_template')->defaultValue('')->end()
                 ->arrayNode('clients')
                     ->canBeUnset()
                     ->children()
